@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  entrypoint.sh: |
+    {{- .Files.Get "configs/jvb/entrypoint.sh" | nindent 4 }}
+kind: ConfigMap
+metadata:
+  labels:
+    scope: jitsi
+  name: jvb-entrypoint
+  namespace: {{ $.Values.namespace }}

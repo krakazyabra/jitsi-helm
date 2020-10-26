@@ -1,0 +1,27 @@
+{{- range $shard, $e := until (int $.Values.shardCount) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    scope: jitsi
+    service: {{ $.Values.prosody.name }}
+    shard: {{ $shard | quote}}
+  name: shard-{{ $shard }}-{{ $.Values.prosody.name }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  ports:
+  - name: "5222"
+    port: 5222
+    targetPort: 5222
+  - name: "5280"
+    port: 5280
+    targetPort: 5280
+  - name: "5347"
+    port: 5347
+    targetPort: 5347
+  selector:
+    k8s-app: {{ $.Values.prosody.name }}
+    scope: jitsi
+    shard: {{ $shard | quote}}
+{{ end }}

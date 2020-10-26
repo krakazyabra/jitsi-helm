@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  jitsi-meet.cfg.lua: |-
+    {{- .Files.Get "configs/prosody/jitsi-meet.cfg.lua" | nindent 4 }}
+  mod_measure_client_presence.lua: |
+    {{- .Files.Get "configs/prosody/mod_measure_client_presence.lua" | nindent 4 }}
+  mod_measure_stanza_counts.lua: |
+    {{- .Files.Get "configs/prosody/mod_measure_stanza_counts.lua" | nindent 4 }}
+  mod_prometheus.lua: |
+    {{- .Files.Get "configs/prosody/mod_prometheus.lua" | nindent 4 }}
+kind: ConfigMap
+metadata:
+  labels:
+    scope: jitsi
+  name: prosody
+  namespace: {{ $.Values.namespace }}

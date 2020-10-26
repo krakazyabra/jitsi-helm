@@ -1,0 +1,132 @@
+{{- range $shard, $e := until (int $.Values.shardCount) }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    k8s-app: {{ $.Values.jvb.name }}
+    scope: jitsi
+    shard: {{ $shard | quote }}
+  name: shard-{{ $shard }}-{{ $.Values.jvb.name }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  podManagementPolicy: Parallel
+  replicas: {{ $.Values.jvb.replicas }}
+  selector:
+    matchLabels:
+      k8s-app: {{ $.Values.jvb.name }}
+      scope: jitsi
+      shard: {{ $shard | quote }}
+  serviceName: jvb
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ $.Values.jvb.name }}
+        scope: jitsi
+        shard: {{ $shard | quote }}
+    spec:
+      containers:
+      {{ if $.Values.jvb.monitoringEnable -}}
+      - args:
+        - -videobridge-url
+        - http://localhost:8080/colibri/stats
+        image: systemli/prometheus-jitsi-meet-exporter:1.1.1
+        imagePullPolicy: Always
+        name: prometheus-exporter
+        ports:
+        - containerPort: 9888
+          name: metrics
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+      {{ end -}}
+      - args:
+        - "30300"
+        - /init
+        command:
+        - /entrypoint/entrypoint.sh
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: XMPP_SERVER
+          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}
+        - name: DOCKER_HOST_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: XMPP_DOMAIN
+          value: meet.jitsi
+        - name: XMPP_AUTH_DOMAIN
+          value: auth.meet.jitsi
+        - name: XMPP_INTERNAL_MUC_DOMAIN
+          value: internal-muc.meet.jitsi
+        - name: JVB_STUN_SERVERS
+          value: stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302
+        - name: JICOFO_AUTH_USER
+          value: focus
+        - name: JVB_TCP_HARVESTER_DISABLED
+          value: "true"
+        - name: JVB_ENABLE_APIS
+          value: colibri,rest
+        - name: JVB_AUTH_USER
+          value: jvb
+        - name: JVB_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: JVB_AUTH_PASSWORD
+              name: jitsi-config
+        - name: JICOFO_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: JICOFO_AUTH_PASSWORD
+              name: jitsi-config
+        - name: JVB_BREWERY_MUC
+          value: jvbbrewery
+        - name: TZ
+          value: Europe/Prague
+        image: {{ $.Values.jvb.image }}
+        imagePullPolicy: {{ $.Values.jvb.imagePullPolicy }}
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - bash
+              - /shutdown/graceful_shutdown.sh
+              - -t 3
+        name: jvb
+        readinessProbe:
+          httpGet:
+            path: /about/health
+            port: 8080
+          initialDelaySeconds: 10
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 1000Mi
+          requests:
+            cpu: 1500m
+            memory: 1000Mi
+        volumeMounts:
+        - mountPath: /entrypoint
+          name: jvb-entrypoint
+        - mountPath: /shutdown
+          name: jvb-shutdown
+      terminationGracePeriodSeconds: 2147483647
+      volumes:
+      - configMap:
+          defaultMode: 484
+          name: jvb-entrypoint
+        name: jvb-entrypoint
+      - configMap:
+          defaultMode: 484
+          name: jvb-shutdown
+        name: jvb-shutdown
+  updateStrategy:
+    type: RollingUpdate
+{{ end }}

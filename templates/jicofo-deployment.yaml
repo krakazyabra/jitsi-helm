@@ -1,0 +1,73 @@
+{{- range $shard, $e := until (int $.Values.shardCount) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: {{ $.Values.jicofo.name }}
+    scope: jitsi
+    shard: {{ $shard | quote}}
+  name: shard-{{ $shard }}-{{ $.Values.jicofo.name }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: {{ $.Values.jicofo.name }}
+      scope: jitsi
+      shard: {{ $shard | quote}}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ $.Values.jicofo.name }}
+        scope: jitsi
+        shard: {{ $shard | quote}}
+    spec:
+      containers:
+      - env:
+        - name: XMPP_SERVER
+          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}
+        - name: XMPP_DOMAIN
+          value: meet.jitsi
+        - name: XMPP_AUTH_DOMAIN
+          value: auth.meet.jitsi
+        - name: XMPP_INTERNAL_MUC_DOMAIN
+          value: internal-muc.meet.jitsi
+        - name: JICOFO_COMPONENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: JICOFO_COMPONENT_SECRET
+              name: jitsi-config
+        - name: JICOFO_AUTH_USER
+          value: focus
+        - name: JICOFO_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: JICOFO_AUTH_PASSWORD
+              name: jitsi-config
+        - name: TZ
+          value: Europe/Prague
+        - name: JVB_BREWERY_MUC
+          value: jvbbrewery
+        - name: JICOFO_ENABLE_HEALTH_CHECKS
+          value: "false"
+        image: {{ $.Values.jicofo.image }}
+        imagePullPolicy: {{ $.Values.jicofo.imagePullPolicy }}
+        name: jicofo
+        # readinessProbe:
+        #   httpGet:
+        #     path: /about/health
+        #     port: 8888
+        resources:
+          limits:
+            cpu: 400m
+            memory: 400Mi
+          requests:
+            cpu: 400m
+            memory: 400Mi
+{{ end }}

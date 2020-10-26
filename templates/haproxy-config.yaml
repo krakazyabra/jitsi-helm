@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  haproxy.cfg: |
+    {{- .Files.Get "configs/haproxy/haproxy.cfg" | nindent 4 }}
+    server-template shard 0-{{ $.Values.shardCount }} _http._tcp.{{ $.Values.web.name }}.{{ $.Values.namespace}}.svc.cluster.local:80 check resolvers kube-dns init-addr none
+kind: ConfigMap
+metadata:
+  name: haproxy-config
+  namespace: {{ $.Values.namespace }}

@@ -1,0 +1,37 @@
+shardCount: 2
+namespace: jitsi
+haproxy:
+  name: haproxy
+  image: haproxy:2.1
+  ingressEnable: true
+  ingress:
+    host: jitsi.domain.org
+    tlsEnable: true
+jicofo:
+  name: jicofo
+  image: jitsi/jicofo
+  imagePullPolicy: Always
+jvb:
+  name: jvb
+  replicas: 1
+  image: jitsi/jvb
+  imagePullPolicy: Always
+  monitoringEnable: true
+prosody:
+  name: prosody
+  image: jitsi/prosody
+  imagePullPolicy: Always
+web:
+  name: web
+  image: jitsi/web
+  imagePullPolicy: Always
+  ## If you want to use your own custom watermark, first create configmap from your png file: `kubectl create configmap -n <namespace> watermark --from-file=watermark.png`
+  watermark: true
+
+JICOFO_AUTH_PASSWORD: ""
+JICOFO_COMPONENT_SECRET: ""
+JVB_AUTH_PASSWORD: ""
+JVB_STUN_SERVERS: stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302
+TURN_HOST: meet-jit-si-turnrelay.jitsi.net
+TURN_PORT: "4446"
+TURNS_PORT: "443"

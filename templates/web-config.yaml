@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  config.js: |
+    {{- .Files.Get "configs/web/config.js" | nindent 4 }}
+  interface_config.js: |
+    {{- .Files.Get "configs/web/interface_config.js" | nindent 4 }}
+  plugin.head.html: |
+    {{- .Files.Get "configs/web/plugin.head.html" | nindent 4 }}
+  welcomePageAdditionalContent.html: |
+    {{- .Files.Get "configs/web/welcomePageAdditionalContent.html" | nindent 4 }}
+kind: ConfigMap
+metadata:
+  labels:
+    scope: jitsi
+  name: web
+  namespace: {{ $.Values.namespace }}

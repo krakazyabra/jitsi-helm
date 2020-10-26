@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    k8s-app: {{ $.Values.haproxy.name }}
+  name: {{ $.Values.haproxy.name }}
+  namespace: {{ $.Values.namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: {{ $.Values.haproxy.name }}
+  serviceName: {{ $.Values.haproxy.name }}
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ $.Values.haproxy.name }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: k8s-app
+                operator: In
+                values:
+                - {{ $.Values.haproxy.name }}
+            topologyKey: topology.kubernetes.io/zone
+      containers:
+      - args:
+        - apt-get update && apt-get install -y dnsutils; [[ $HOSTNAME = '{{ $.Values.haproxy.name }}-1'
+          ]] && export OTHER_HOSTNAME={{ $.Values.haproxy.name }}-0 OTHER_IP=$(nslookup {{ $.Values.haproxy.name }}-0 | awk
+          'NR==5 {print $2}') || export OTHER_HOSTNAME={{ $.Values.haproxy.name }}-1 OTHER_IP=$(nslookup
+          {{ $.Values.haproxy.name }}-1 | awk 'NR==5 {print $2}'); exec /docker-entrypoint.sh haproxy
+          -f /usr/local/etc/haproxy/haproxy.cfg
+        command:
+        - bash
+        - -c
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        image: {{ $.Values.haproxy.image }}
+        name: haproxy
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 9090
+          name: metrics
+        - containerPort: 1024
+          name: peering
+        volumeMounts:
+        - mountPath: /usr/local/etc/haproxy/haproxy.cfg
+          name: haproxy-config
+          subPath: haproxy.cfg
+      volumes:
+      - configMap:
+          items:
+          - key: haproxy.cfg
+            path: haproxy.cfg
+          name: haproxy-config
+        name: haproxy-config
