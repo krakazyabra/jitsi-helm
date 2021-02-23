@@ -1,3 +1,5 @@
+P.S. PRs with fixed or improves are welcome ;-)
+
 # About
 A [Jitsi Meet](https://jitsi.org/jitsi-meet/) Chart for Kubernetes with 2 replicas of  [HAproxy](https://github.com/haproxytech/haproxy-docker-debian/tree/master/2.1) in peering. All Jitsi shard are in backend via `server-template` in configuration.
 
