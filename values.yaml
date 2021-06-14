@@ -1,37 +1,70 @@
-shardCount: 2
+shardCount: 1
 namespace: jitsi
+
+# extraPodSpec can be used to add tolerations and placement hints
+# to any of the following components
+
 haproxy:
   name: haproxy
-  image: haproxy:2.1
+  image: haproxy:2.3
   ingressEnable: true
   ingress:
-    host: jitsi.domain.org
+    # can be alb
+    class: haproxy
+    host: jitsi.example.org
     tlsEnable: true
+    # albGroup: global
 jicofo:
   name: jicofo
-  image: jitsi/jicofo
+  image: jitsi/jicofo:stable-5963
   imagePullPolicy: Always
+  resources:
+    requests:
+      cpu: 400m
+      memory: 400Mi
 jvb:
   name: jvb
-  replicas: 1
-  image: jitsi/jvb
+  replicas: 2
+  image: jitsi/jvb:stable-5963
   imagePullPolicy: Always
   monitoringEnable: true
+  sysctlDaemonSetEnable: true
+  resources:
+    requests:
+      cpu: 3000m
+      memory: 3000Mi
 prosody:
   name: prosody
-  image: jitsi/prosody
+  image: jitsi/prosody:stable-5963
   imagePullPolicy: Always
+  monitoringEnable: true
+  resources:
+    requests:
+      memory: 300Mi
+      cpu: 300m
 web:
   name: web
-  image: jitsi/web
+  image: jitsi/web:stable-5963
   imagePullPolicy: Always
-  ## If you want to use your own custom watermark, first create configmap from your png file: `kubectl create configmap -n <namespace> watermark --from-file=watermark.png`
-  watermark: true
+  ## kubectl create configmap -n <namespace> custom-config --from-file=custom-config.js
+  customConfig: false
+  ## kubectl create configmap -n <namespace> custom-ui --from-file=custom-interface_config.js
+  customUi: false
+  ## kubectl create configmap -n <namespace> plugin-head --from-file=plugin.head.html
+  pluginHead: false
+  ## kubectl create configmap -n <namespace> welcome-page-footer --from-file=welcomePageAdditionalContent.html
+  welcomePageFooter: false
+  ## kubectl create configmap -n <namespace> watermark --from-file=watermark.png
+  customWatermark: false
+  resources:
+    requests:
+      cpu: 400m
+      memory: 300Mi
 
 JICOFO_AUTH_PASSWORD: ""
 JICOFO_COMPONENT_SECRET: ""
 JVB_AUTH_PASSWORD: ""
+
+TZ: Europe/London
+
 JVB_STUN_SERVERS: stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302
-TURN_HOST: meet-jit-si-turnrelay.jitsi.net
-TURN_PORT: "4446"
-TURNS_PORT: "443"

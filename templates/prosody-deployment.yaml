@@ -27,7 +27,15 @@ spec:
         k8s-app: {{ $.Values.prosody.name }}
         scope: jitsi
         shard: {{ $shard | quote}}
+      {{ if $.Values.prosody.monitoringEnable }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5280"
+      {{ end }}
     spec:
+    {{- with $.Values.prosody.extraPodSpec }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
       volumes:
         - name: prosody
           configMap:
@@ -39,22 +47,19 @@ spec:
                 path: mod_measure_stanza_counts.lua
               - key: mod_measure_client_presence.lua
                 path: mod_measure_client_presence.lua
-              - key: jitsi-meet.cfg.lua
-                path: jitsi-meet.cfg.lua
       containers:
         - name: prosody
+        {{- with $.Values.prosody.resources }}
           resources:
-            limits:
-              memory: 300Mi
-              cpu: 300m
-            requests:
-              memory: 300Mi
-              cpu: 300m
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
           image: {{ $.Values.prosody.image }}
           imagePullPolicy: {{ $.Values.prosody.imagePullPolicy }}
+          {{ if $.Values.prosody.monitoringEnable -}}
           ports:
             - name: metrics
               containerPort: 5280
+          {{ end -}}
           readinessProbe:
             ## the command that is called obeys standard exit codes
             exec:
@@ -64,6 +69,7 @@ spec:
                 - /config/prosody.cfg.lua
                 - status
           volumeMounts:
+          {{ if $.Values.prosody.monitoringEnable -}}
           # add-ons that allow exporting of metrics to prometheus (mod_prometheus.lua)
           # or enrich the available stats (mod_measure_stanza_counts.lua,
           # mod_measure_client_presence.lua)
@@ -76,9 +82,7 @@ spec:
           - name: prosody
             mountPath: /usr/lib/prosody/modules/mod_measure_client_presence.lua
             subPath: mod_measure_client_presence.lua
-          - name: prosody
-            mountPath: /defaults/conf.d/jitsi-meet.cfg.lua
-            subPath: jitsi-meet.cfg.lua
+          {{ end -}}
           env:
             - name: XMPP_DOMAIN
               value: meet.jitsi
@@ -110,19 +114,36 @@ spec:
                   name: jitsi-config
                   key: JICOFO_AUTH_PASSWORD
             - name: TZ
-              value: Europe/Prague
-            - name: JVB_TCP_HARVESTER_DISABLED
-              value: "true"
+              valueFrom:
+                secretKeyRef:
+                  key: TZ
+                  name: jitsi-config
+            {{ if $.Values.prosody.monitoringEnable }}
             # activate add-ons that enrich the available stats of prosody
             - name: GLOBAL_MODULES
-              value: prometheus,measure_stanza_counts,measure_client_presence
+              value: statistics,alert,prometheus,measure_stanza_counts,measure_client_presence
             # config to allow exporting metrics in prometheus format by prometheus add-on
             - name: GLOBAL_CONFIG
               value: statistics = "internal";\nstatistics_interval = 15;
-            - name: TURN_HOST
-              value: "meet-jit-si-turnrelay.jitsi.net"
-            - name: TURN_PORT
-              value: "4446"
-            - name: TURNS_PORT
-              value: "443"
+            {{ end }}
+            # - name: TURN_HOST
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: jitsi-config
+            #       key: TURN_HOST
+            # - name: TURN_PORT
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: jitsi-config
+            #       key: TURN_PORT
+            # - name: TURNS_PORT
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: jitsi-config
+            #       key: TURNS_PORT
+            - name: PUBLIC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: jitsi-config
+                  key: PUBLIC_URL
 {{ end }}

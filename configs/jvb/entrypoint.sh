@@ -13,8 +13,11 @@ else
 fi
 
 # add jvb ID to the base port (e.g. 30300 + 1 = 30301)
-export JVB_PORT=$(($BASE_PORT+${HOSTNAME##*-}))
+export JVB_PORT=$(($BASE_PORT+${HOSTNAME##*-}*2))
 echo "JVB_PORT=$JVB_PORT"
+
+export JVB_TCP_PORT=$(($JVB_PORT+1))
+export JVB_TCP_MAPPED_PORT=$JVB_TCP_PORT
 
 echo "Allowing shutdown of JVB via Rest from localhost..."
 echo "org.jitsi.videobridge.ENABLE_REST_SHUTDOWN=true" >> /defaults/sip-communicator.properties

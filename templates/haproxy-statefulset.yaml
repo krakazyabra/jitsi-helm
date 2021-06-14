@@ -16,6 +16,9 @@ spec:
       labels:
         k8s-app: {{ $.Values.haproxy.name }}
     spec:
+    {{- with $.Values.haproxy.extraPodSpec }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -44,7 +47,7 @@ spec:
         image: {{ $.Values.haproxy.image }}
         name: haproxy
         ports:
-        - containerPort: 80
+        - containerPort: 8080
           name: http
         - containerPort: 9090
           name: metrics
@@ -54,6 +57,10 @@ spec:
         - mountPath: /usr/local/etc/haproxy/haproxy.cfg
           name: haproxy-config
           subPath: haproxy.cfg
+      {{- with $.Values.haproxy.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+      {{- end }}
       volumes:
       - configMap:
           items:
