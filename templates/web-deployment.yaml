@@ -28,6 +28,9 @@ spec:
         scope: jitsi
         shard: {{ $shard | quote}}
     spec:
+    {{- with $.Values.web.extraPodSpec }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
       containers:
       - env:
         - name: DISABLE_HTTPS
@@ -49,49 +52,85 @@ spec:
         - name: XMPP_MUC_DOMAIN
           value: muc.meet.jitsi
         - name: TZ
-          value: Europe/Prague
-        - name: JVB_TCP_HARVESTER_DISABLED
-          value: "true"
+          valueFrom:
+            secretKeyRef:
+              key: TZ
+              name: jitsi-config
+        - name: PUBLIC_URL
+          valueFrom:
+            secretKeyRef:
+              name: jitsi-config
+              key: PUBLIC_URL
         image: {{ $.Values.web.image }}
         imagePullPolicy: {{ $.Values.web.imagePullPolicy }}
         name: web
         readinessProbe:
           httpGet:
             port: 80
+      {{- with $.Values.web.resources }}
         resources:
-          limits:
-            cpu: 400m
-            memory: 300Mi
-          requests:
-            cpu: 400m
-            memory: 300Mi
+          {{- toYaml . | nindent 10 }}
+      {{- end }}
         volumeMounts:
+        {{- if $.Values.web.customConfig }}
+        - mountPath: /config/custom-config.js
+          name: custom-config
+          subPath: custom-config.js
+        {{ end }}
+        {{- if $.Values.web.customUi }}
+        - mountPath: /config/custom-interface_config.js
+          name: custom-ui
+          subPath: custom-interface_config.js
+        {{ end }}
+        {{- if $.Values.web.pluginHead }}
         - mountPath: /usr/share/jitsi-meet/plugin.head.html
-          name: web
+          name: plugin-head
           subPath: plugin.head.html
-        - mountPath: /defaults/config.js
-          name: web
-          subPath: config.js
-        - mountPath: /defaults/interface_config.js
-          name: web
-          subPath: interface_config.js
-        {{- if $.Values.web.watermark }}
+        {{ end }}
+        {{- if $.Values.web.welcomePageFooter }}
+        - mountPath: /usr/share/jitsi-meet/static/welcomePageAdditionalContent.html
+          name: welcome-page-footer
+          subPath: welcomePageAdditionalContent.html
+        {{ end }}
+        {{- if $.Values.web.customWatermark }}
         - mountPath: /usr/share/jitsi-meet/images/watermark.png
           name: watermark
           subPath: watermark.png
         {{ end }}
       volumes:
+      {{- if $.Values.web.customConfig }}
+      - configMap:
+          items:
+          - key: custom-config.js
+            path: custom-config.js
+          name: custom-config
+        name: custom-config
+      {{ end }}
+      {{- if $.Values.web.customUi }}
+      - configMap:
+          items:
+          - key: custom-interface_config.js
+            path: custom-interface_config.js
+          name: custom-ui
+        name: custom-ui
+      {{ end }}
+      {{- if $.Values.web.pluginHead }}
       - configMap:
           items:
           - key: plugin.head.html
             path: plugin.head.html
-          - key: config.js
-            path: config.js
-          - key: interface_config.js
-            path: interface_config.js
-          name: web
-        name: web
-      {{- if $.Values.web.watermark }}
+          name: plugin-head
+        name: plugin-head
+      {{ end }}
+      {{- if $.Values.web.welcomePageFooter }}
+      - configMap:
+          items:
+          - key: welcomePageAdditionalContent.html
+            path: welcomePageAdditionalContent.html
+          name: welcome-page-footer
+        name: welcome-page-footer
+      {{ end }}
+      {{- if $.Values.web.customWatermark }}
       - configMap:
           items:
           - key: watermark.png

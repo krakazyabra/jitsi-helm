@@ -9,6 +9,9 @@ metadata:
     shard: {{ $shard | quote }}
   name: shard-{{ $shard }}-{{ $.Values.jvb.name }}
   namespace: {{ $.Values.namespace }}
+  # needed for metacontroller to create/delete service per pod
+  annotations:
+    service-per-pod-label: "statefulset.kubernetes.io/pod-name"
 spec:
   podManagementPolicy: Parallel
   replicas: {{ $.Values.jvb.replicas }}
@@ -24,13 +27,21 @@ spec:
         k8s-app: {{ $.Values.jvb.name }}
         scope: jitsi
         shard: {{ $shard | quote }}
+      {{ if $.Values.jvb.monitoringEnable }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9888"
+      {{ end }}
     spec:
+    {{- with $.Values.jvb.extraPodSpec }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
       containers:
       {{ if $.Values.jvb.monitoringEnable -}}
       - args:
         - -videobridge-url
         - http://localhost:8080/colibri/stats
-        image: systemli/prometheus-jitsi-meet-exporter:1.1.1
+        image: systemli/prometheus-jitsi-meet-exporter:1.1.6
         imagePullPolicy: Always
         name: prometheus-exporter
         ports:
@@ -45,7 +56,7 @@ spec:
             memory: 100Mi
       {{ end -}}
       - args:
-        - "30300"
+        - "30{{ add $shard 3 }}00"
         - /init
         command:
         - /entrypoint/entrypoint.sh
@@ -67,11 +78,14 @@ spec:
         - name: XMPP_INTERNAL_MUC_DOMAIN
           value: internal-muc.meet.jitsi
         - name: JVB_STUN_SERVERS
-          value: stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302
+          valueFrom:
+            secretKeyRef:
+              key: JVB_STUN_SERVERS
+              name: jitsi-config
         - name: JICOFO_AUTH_USER
           value: focus
         - name: JVB_TCP_HARVESTER_DISABLED
-          value: "true"
+          value: "false"
         - name: JVB_ENABLE_APIS
           value: colibri,rest
         - name: JVB_AUTH_USER
@@ -89,7 +103,15 @@ spec:
         - name: JVB_BREWERY_MUC
           value: jvbbrewery
         - name: TZ
-          value: Europe/Prague
+          valueFrom:
+            secretKeyRef:
+              key: TZ
+              name: jitsi-config
+        - name: PUBLIC_URL
+          valueFrom:
+            secretKeyRef:
+              name: jitsi-config
+              key: PUBLIC_URL
         image: {{ $.Values.jvb.image }}
         imagePullPolicy: {{ $.Values.jvb.imagePullPolicy }}
         lifecycle:
@@ -105,13 +127,10 @@ spec:
             path: /about/health
             port: 8080
           initialDelaySeconds: 10
+      {{- with $.Values.jvb.resources }}
         resources:
-          limits:
-            cpu: 1500m
-            memory: 1000Mi
-          requests:
-            cpu: 1500m
-            memory: 1000Mi
+          {{- toYaml . | nindent 10 }}
+      {{- end }}
         volumeMounts:
         - mountPath: /entrypoint
           name: jvb-entrypoint

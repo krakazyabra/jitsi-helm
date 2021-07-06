@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-per-pod
+  namespace: {{ $.Values.namespace }}
+  labels:
+    scope: jitsi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: service-per-pod
+  template:
+    metadata:
+      labels:
+        k8s-app: service-per-pod
+        scope: jitsi
+    spec:
+      containers:
+      - name: hooks
+        image: metacontroller/jsonnetd:0.1
+        imagePullPolicy: Always
+        workingDir: /hooks
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+      volumes:
+      - name: hooks
+        configMap:
+          name: service-per-pod-hooks
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-per-pod
+  namespace: {{ $.Values.namespace }}
+  labels:
+    scope: jitsi
+spec:
+  selector:
+    k8s-app: service-per-pod
+  ports:
+  - port: 80
+    targetPort: 8080
