@@ -11,7 +11,7 @@ metadata:
   namespace: {{ $.Values.namespace }}
   # needed for metacontroller to create/delete service per pod
   annotations:
-    service-per-pod-label: "statefulset.kubernetes.io/pod-name"
+    jitsi-service-per-pod-label: "statefulset.kubernetes.io/pod-name"
 spec:
   podManagementPolicy: Parallel
   replicas: {{ $.Values.jvb.replicas }}

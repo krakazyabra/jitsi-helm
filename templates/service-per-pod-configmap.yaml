@@ -1,9 +1,10 @@
 # This ConfigMap defines the automation of creating NodePorts for every emerging JVB pod to expose it to the internet.
+{{ if ne $.Values.metacontrollerNamespace "" -}}
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: service-per-pod-hooks
-  namespace: {{ $.Values.namespace }}
+  name: jitsi-service-per-pod-hooks
+  namespace: {{ $.Values.metacontrollerNamespace }}
   labels:
     scope: jitsi
 data:
@@ -15,20 +16,10 @@ data:
       // Mark as finalized once we observe all Services are gone.
       finalized: std.length(request.attachments['Service.v1']) == 0
     }
-  sync-pod-name-label.jsonnet: |
-    function(request) {
-      local pod = request.object,
-      local labelKey = pod.metadata.annotations["pod-name-label"],
-
-      // Inject the Pod name as a label with the key requested in the annotation.
-      labels: {
-        [labelKey]: pod.metadata.name
-      }
-    }
   sync-service-per-pod.jsonnet: |
     function(request) {
       local statefulset = request.object,
-      local labelKey = statefulset.metadata.annotations["service-per-pod-label"],
+      local labelKey = statefulset.metadata.annotations["jitsi-service-per-pod-label"],
 
       // the base port for is collected from the container setup
       local basePort = std.parseInt([
@@ -77,3 +68,4 @@ data:
         for index in std.range(0, statefulset.spec.replicas - 1)
       ]
     }
+{{ end -}}

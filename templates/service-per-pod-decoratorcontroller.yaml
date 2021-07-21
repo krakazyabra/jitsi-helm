@@ -1,9 +1,9 @@
 # see https://github.com/GoogleCloudPlatform/metacontroller/tree/master/examples/service-per-pod
-
+{{ if ne $.Values.metacontrollerNamespace "" -}}
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: DecoratorController
 metadata:
-  name: service-per-pod
+  name: jitsi-service-per-pod
   labels:
     scope: jitsi
 spec:
@@ -12,35 +12,15 @@ spec:
     resource: statefulsets
     annotationSelector:
       matchExpressions:
-      - {key: service-per-pod-label, operator: Exists}
+      - {key: jitsi-service-per-pod-label, operator: Exists}
   attachments:
   - apiVersion: v1
     resource: services
   hooks:
     sync:
       webhook:
-        url: http://service-per-pod.jitsi/sync-service-per-pod
+        url: http://jitsi-service-per-pod.{{ $.Values.metacontrollerNamespace }}/sync-service-per-pod
     finalize:
       webhook:
-        url: http://service-per-pod.jitsi/finalize-service-per-pod
----
-apiVersion: metacontroller.k8s.io/v1alpha1
-kind: DecoratorController
-metadata:
-  name: pod-name-label
-  labels:
-    scope: jitsi
-spec:
-  resources:
-  - apiVersion: v1
-    resource: pods
-    labelSelector:
-      matchExpressions:
-      - {key: pod-name, operator: DoesNotExist}
-    annotationSelector:
-      matchExpressions:
-      - {key: pod-name-label, operator: Exists}
-  hooks:
-    sync:
-      webhook:
-        url: http://service-per-pod.jitsi/sync-pod-name-label
+        url: http://jitsi-service-per-pod.{{ $.Values.metacontrollerNamespace }}/finalize-service-per-pod
+{{ end -}}

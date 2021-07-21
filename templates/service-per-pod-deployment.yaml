@@ -1,19 +1,20 @@
+{{ if ne $.Values.metacontrollerNamespace "" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-per-pod
-  namespace: {{ $.Values.namespace }}
+  name: jitsi-service-per-pod
+  namespace: {{ $.Values.metacontrollerNamespace }}
   labels:
     scope: jitsi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      k8s-app: service-per-pod
+      k8s-app: jitsi-service-per-pod
   template:
     metadata:
       labels:
-        k8s-app: service-per-pod
+        k8s-app: jitsi-service-per-pod
         scope: jitsi
     spec:
       containers:
@@ -27,18 +28,19 @@ spec:
       volumes:
       - name: hooks
         configMap:
-          name: service-per-pod-hooks
+          name: jitsi-service-per-pod-hooks
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-per-pod
-  namespace: {{ $.Values.namespace }}
+  name: jitsi-service-per-pod
+  namespace: {{ $.Values.metacontrollerNamespace }}
   labels:
     scope: jitsi
 spec:
   selector:
-    k8s-app: service-per-pod
+    k8s-app: jitsi-service-per-pod
   ports:
   - port: 80
     targetPort: 8080
+{{ end -}}
