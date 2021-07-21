@@ -25,6 +25,10 @@ jicofo:
 jvb:
   name: jvb
   replicas: 2
+  # Nodeports 30XXX will be used by default
+  # you can use this variable to have several Jitsi cluster running on a cluster
+  # specifying "31" will use ports 31XXX
+  nodeportPrefix: "30"
   image: jitsi/jvb:stable-5963
   imagePullPolicy: Always
   monitoringEnable: true

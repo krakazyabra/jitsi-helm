@@ -56,7 +56,7 @@ spec:
             memory: 100Mi
       {{ end -}}
       - args:
-        - "30{{ add $shard 3 }}00"
+        - "{{ $.Values.jvb.nodeportPrefix }}{{ add $shard 3 }}00"
         - /init
         command:
         - /entrypoint/entrypoint.sh
