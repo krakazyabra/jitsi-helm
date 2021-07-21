@@ -1,4 +1,6 @@
+{{ if ne $.Values.metacontrollerNamespace "" -}}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: metacontroller
+  name: {{ $.Values.metacontrollerNamespace }}
+{{ end -}}

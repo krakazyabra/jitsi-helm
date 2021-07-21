@@ -61,6 +61,10 @@ web:
       cpu: 400m
       memory: 300Mi
 
+# if empty, the metacontroller will not be installed
+# can be used to instantiate several Jitsi clusters on one Kubernetes cluster
+metacontrollerNamespace: metacontroller
+
 JICOFO_AUTH_PASSWORD: ""
 JICOFO_COMPONENT_SECRET: ""
 JVB_AUTH_PASSWORD: ""
