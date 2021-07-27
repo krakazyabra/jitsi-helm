@@ -46,6 +46,9 @@ prosody:
     requests:
       memory: 300Mi
       cpu: 300m
+  extraEnvs: []
+  extraVolumes: []
+  extraVolumeMounts: []
 web:
   name: web
   image: jitsi/web:stable-5963
@@ -64,6 +67,9 @@ web:
     requests:
       cpu: 400m
       memory: 300Mi
+  extraEnvs: []
+  extraVolumes: []
+  extraVolumeMounts: []
 
 # if empty, the metacontroller will not be installed
 # can be used to instantiate several Jitsi clusters on one Kubernetes cluster
