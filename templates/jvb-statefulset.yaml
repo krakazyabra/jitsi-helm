@@ -122,6 +122,9 @@ spec:
               - /shutdown/graceful_shutdown.sh
               - -t 3
         name: jvb
+        ports:
+        - containerPort: 9090
+          name: websocket
         readinessProbe:
           httpGet:
             path: /about/health

@@ -6,12 +6,6 @@ data:
     {{- .Files.Get "configs/prosody/mod_measure_stanza_counts.lua" | nindent 4 }}
   mod_prometheus.lua: |
     {{- .Files.Get "configs/prosody/mod_prometheus.lua" | nindent 4 }}
-  mod_auth_matrix_user_verification.lua: |
-    {{- .Files.Get "configs/prosody/mod_auth_matrix_user_verification.lua" | nindent 4 }}
-  mod_matrix_power_sync.lua: |
-    {{- .Files.Get "configs/prosody/mod_matrix_power_sync.lua" | nindent 4 }}
-  jitsi-meet.cfg.lua: |
-    {{- .Files.Get "configs/prosody/jitsi-meet.cfg.lua" | nindent 4 }}
 kind: ConfigMap
 metadata:
   labels:
