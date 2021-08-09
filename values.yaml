@@ -49,6 +49,8 @@ prosody:
   extraEnvs: []
   extraVolumes: []
   extraVolumeMounts: []
+  globalModules: []
+  globalConfig: []
 web:
   name: web
   image: jitsi/web:stable-5963

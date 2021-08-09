@@ -127,10 +127,19 @@ spec:
             {{ if $.Values.prosody.monitoringEnable }}
             # activate add-ons that enrich the available stats of prosody
             - name: GLOBAL_MODULES
-              value: prometheus,measure_stanza_counts,measure_client_presence
+              value: prometheus,measure_stanza_counts,measure_client_presence{{- if $.Values.prosody.globalModules -}},{{- join "," $.Values.prosody.globalModules -}}{{- end }}
             # config to allow exporting metrics in prometheus format by prometheus add-on
             - name: GLOBAL_CONFIG
-              value: statistics = "internal";\nstatistics_interval = 15;
+              value: statistics = "internal";\nstatistics_interval = 15;{{- if $.Values.prosody.globalConfig -}}\n{{- join ";\\n" $.Values.prosody.globalConfig -}};{{- end }}
+            {{ else }}
+            {{- if $.Values.prosody.globalModules }}
+            - name: GLOBAL_MODULES
+              value: {{- join "," $.Values.prosody.globalModules }}
+            {{ end -}}
+            {{- if $.Values.prosody.globalConfig }}
+            - name: GLOBAL_CONFIG
+              value: {{- join ";\\n" $.Values.prosody.globalConfig }}
+            {{ end -}}
             {{ end }}
             - name: PUBLIC_URL
               valueFrom:
