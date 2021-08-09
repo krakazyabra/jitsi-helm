@@ -35,7 +35,7 @@ data:
           apiVersion: "v1",
           kind: "Service",
           metadata: {
-            name: statefulset.metadata.name + "-" + index,
+            name: statefulset.metadata.name + "-" + index + "-ice",
             labels: {
               app: "service-per-pod",
               scope: "jitsi"
@@ -61,6 +61,33 @@ data:
                 "protocol": "TCP",
                 "targetPort": basePort + (index*2) + 1,
                 "nodePort": basePort + (index*2) + 1
+              }
+            ]
+          }
+        }
+        for index in std.range(0, statefulset.spec.replicas - 1)
+      ] + [
+        {
+          apiVersion: "v1",
+          kind: "Service",
+          metadata: {
+            name: statefulset.metadata.name + "-" + index + "-metrics",
+            labels: {
+              app: "service-per-pod",
+              scope: "jitsi"
+            }
+          },
+          spec: {
+          selector: {
+              [labelKey]: statefulset.metadata.name + "-" + index
+            },
+            type: "ClusterIP",
+            ports: [
+              {
+                "name": "metrics",
+                "port": 9888,
+                "protocol": "TCP",
+                "targetPort": "metrics"
               }
             ]
           }
