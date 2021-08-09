@@ -43,10 +43,18 @@ spec:
         - http://localhost:8080/colibri/stats
         image: systemli/prometheus-jitsi-meet-exporter:1.1.6
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            port: 9888
+            path: "/health"
         name: prometheus-exporter
         ports:
         - containerPort: 9888
           name: metrics
+        readinessProbe:
+          httpGet:
+            port: 9888
+            path: "/health"
         resources:
           limits:
             cpu: 100m
