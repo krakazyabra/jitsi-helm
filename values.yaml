@@ -22,6 +22,7 @@ jicofo:
     requests:
       cpu: 400m
       memory: 400Mi
+  extraEnvs: []
 jvb:
   name: jvb
   replicas: 2
