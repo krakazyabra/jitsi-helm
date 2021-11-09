@@ -74,7 +74,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: XMPP_SERVER
-          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}
+          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}.{{ $.Values.namespace }}.svc.cluster.local
         - name: DOCKER_HOST_ADDRESS
           valueFrom:
             fieldRef:
