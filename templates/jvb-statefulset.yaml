@@ -124,6 +124,9 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+      {{- if $.Values.jvb.extraEnvs }}
+        {{- toYaml $.Values.jvb.extraEnvs | nindent 8 }}
+      {{- end }}
         image: {{ $.Values.jvb.image }}
         imagePullPolicy: {{ $.Values.jvb.imagePullPolicy }}
         lifecycle:

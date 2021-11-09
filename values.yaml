@@ -38,6 +38,7 @@ jvb:
     requests:
       cpu: 3000m
       memory: 3000Mi
+  extraEnvs: []
 prosody:
   name: prosody
   image: jitsi/prosody:stable-5963
