@@ -120,6 +120,10 @@ spec:
             secretKeyRef:
               name: jitsi-config
               key: PUBLIC_URL
+        - name: JVB_WS_SERVER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         image: {{ $.Values.jvb.image }}
         imagePullPolicy: {{ $.Values.jvb.imagePullPolicy }}
         lifecycle:
