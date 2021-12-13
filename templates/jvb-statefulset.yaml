@@ -94,8 +94,8 @@ spec:
           value: focus
         - name: JVB_TCP_HARVESTER_DISABLED
           value: "false"
-        - name: JVB_ENABLE_APIS
-          value: colibri,rest
+        - name: COLIBRI_REST_ENABLED
+          value: "true"
         - name: JVB_AUTH_USER
           value: jvb
         - name: JVB_AUTH_PASSWORD
