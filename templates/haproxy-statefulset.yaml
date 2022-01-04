@@ -31,11 +31,13 @@ spec:
             topologyKey: topology.kubernetes.io/zone
       containers:
       - args:
-        - apt-get update && apt-get install -y dnsutils; [[ $HOSTNAME = '{{ $.Values.haproxy.name }}-1'
-          ]] && export OTHER_HOSTNAME={{ $.Values.haproxy.name }}-0 OTHER_IP=$(nslookup {{ $.Values.haproxy.name }}-0 | awk
-          'NR==5 {print $2}') || export OTHER_HOSTNAME={{ $.Values.haproxy.name }}-1 OTHER_IP=$(nslookup
-          {{ $.Values.haproxy.name }}-1 | awk 'NR==5 {print $2}'); exec /docker-entrypoint.sh haproxy
-          -f /usr/local/etc/haproxy/haproxy.cfg
+        - > 
+          [[ $HOSTNAME = '{{ $.Values.haproxy.name }}-1' ]] 
+          && export OTHER_HOSTNAME={{ $.Values.haproxy.name }}-0 
+          OTHER_IP=$(getent hosts {{ $.Values.haproxy.name }}-0 | awk '{print $1}') 
+          || export OTHER_HOSTNAME={{ $.Values.haproxy.name }}-1 
+          OTHER_IP=$(getent hosts {{ $.Values.haproxy.name }}-1 | awk '{print $1}'); 
+          exec /docker-entrypoint.sh haproxy -f /usr/local/etc/haproxy/haproxy.cfg
         command:
         - bash
         - -c
