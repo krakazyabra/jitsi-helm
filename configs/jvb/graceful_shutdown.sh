@@ -15,7 +15,7 @@
 #       gracefully after conference count drops to 0
 #   "-s"(disabled by default) enable silent mode - no info output
 #
-#   NOTE: script depends on the tools jq, used to parse json, and curl
+#   NOTE: script depends on python3 which is included in jvb image
 #
 
 # Initialize arguments
@@ -62,9 +62,8 @@ fi
 # conference count from JSON stats text returned.
 function getConferenceCount {
     # Total number of conferences minus the empty conferences
-    curl -s "$hostUrl/colibri/stats"| jq '.conferences - .conference_sizes[0]'
+    python3 -c "import urllib, sys, json; jf=json.load(urllib.request.urlopen(\"$hostUrl/colibri/stats\").read()); print(jf['conferences'] - jf['conference_sizes'][0])"
 }
-
 # Prints info messages
 function printInfo {
   if [ "$verbose" == "1" ]
@@ -78,7 +77,8 @@ function printError {
   echo "$@" 1>&2
 }
 
-shutdownStatus=`curl -s -o /dev/null -H "Content-Type: application/json" -d '{ "graceful-shutdown": "true" }' -w "%{http_code}" "$hostUrl/colibri/shutdown"`
+
+shutdownStatus=`python3 -c "import urllib; print(urllib.request.urlopen(\"$hostUrl/colibri/shutdown\", data={'graceful-shutdown': 'true'}).status)"`
 if [ "$shutdownStatus" == "200" ]
 then
   printInfo "Graceful shutdown started"
@@ -95,12 +95,12 @@ then
 
   sleep 5
 
-  jvbAvailable=`curl -s -o /dev/null -w "%{http_code}" "$hostUrl/colibri/stats"`
+  jvbAvailable=`python3 -c "import urllib; print(urllib.request.urlopen(\"$hostUrl/colibri/stats\").status)"``
   if [ "$jvbAvailable" == "200" ]
   then
     printInfo "It is still running, lets give it $timeout seconds"
     sleep $timeout
-    jvbAvailable=`curl -s -o /dev/null -w "%{http_code}" "$hostUrl/colibri/stats"`
+    jvbAvailable=`python3 -c "import urllib; print(urllib.request.urlopen(\"$hostUrl/colibri/stats\").status)"``
     if [ "$jvbAvailable" == "200" ]
     then
       printError "Bridge did not exit after $timeout sec - killing $pid"
