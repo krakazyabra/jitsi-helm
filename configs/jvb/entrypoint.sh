@@ -1,9 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# both jq and curl are needed for shutdown hook
-apt-dpkg-wrap apt-get update && apt-dpkg-wrap apt-get -y install curl jq
-
 # JVB baseport can be passed to this script
 if [[ "$1" =~ ^[0-9]+$ ]]; then
     BASE_PORT=$1

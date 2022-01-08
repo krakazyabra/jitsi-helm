@@ -1,8 +1,9 @@
+{{ if ne $.Values.metacontrollerNamespace "" -}}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: metacontroller
-  namespace: metacontroller
+  namespace: {{ $.Values.metacontrollerNamespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -23,7 +24,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: metacontroller
-  namespace: metacontroller
+  namespace: {{ $.Values.metacontrollerNamespace }}
 roleRef:
   kind: ClusterRole
   name: metacontroller
@@ -70,3 +71,4 @@ rules:
   - patch
   - update
   - watch
+{{ end -}}

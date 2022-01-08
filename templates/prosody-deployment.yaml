@@ -47,6 +47,9 @@ spec:
                 path: mod_measure_stanza_counts.lua
               - key: mod_measure_client_presence.lua
                 path: mod_measure_client_presence.lua
+      {{- if $.Values.prosody.extraVolumes }}
+        {{- toYaml $.Values.prosody.extraVolumes | nindent 8 }}
+      {{- end }}
       containers:
         - name: prosody
         {{- with $.Values.prosody.resources }}
@@ -83,6 +86,9 @@ spec:
             mountPath: /usr/lib/prosody/modules/mod_measure_client_presence.lua
             subPath: mod_measure_client_presence.lua
           {{ end -}}
+        {{- if $.Values.prosody.extraVolumeMounts }}
+          {{- toYaml $.Values.prosody.extraVolumeMounts | nindent 10 }}
+        {{- end }}
           env:
             - name: XMPP_DOMAIN
               value: meet.jitsi
@@ -116,34 +122,31 @@ spec:
             - name: TZ
               valueFrom:
                 secretKeyRef:
-                  key: TZ
                   name: jitsi-config
+                  key: TZ
             {{ if $.Values.prosody.monitoringEnable }}
             # activate add-ons that enrich the available stats of prosody
             - name: GLOBAL_MODULES
-              value: statistics,alert,prometheus,measure_stanza_counts,measure_client_presence
+              value: prometheus,measure_stanza_counts,measure_client_presence{{- if $.Values.prosody.globalModules -}},{{- join "," $.Values.prosody.globalModules -}}{{- end }}
             # config to allow exporting metrics in prometheus format by prometheus add-on
             - name: GLOBAL_CONFIG
-              value: statistics = "internal";\nstatistics_interval = 15;
+              value: statistics = "internal";\nstatistics_interval = 15;{{- if $.Values.prosody.globalConfig -}}\n{{- join ";\\n" $.Values.prosody.globalConfig -}};{{- end }}
+            {{ else }}
+            {{- if $.Values.prosody.globalModules }}
+            - name: GLOBAL_MODULES
+              value: {{- join "," $.Values.prosody.globalModules }}
+            {{ end -}}
+            {{- if $.Values.prosody.globalConfig }}
+            - name: GLOBAL_CONFIG
+              value: {{- join ";\\n" $.Values.prosody.globalConfig }}
+            {{ end -}}
             {{ end }}
-            # - name: TURN_HOST
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: jitsi-config
-            #       key: TURN_HOST
-            # - name: TURN_PORT
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: jitsi-config
-            #       key: TURN_PORT
-            # - name: TURNS_PORT
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: jitsi-config
-            #       key: TURNS_PORT
             - name: PUBLIC_URL
               valueFrom:
                 secretKeyRef:
                   name: jitsi-config
                   key: PUBLIC_URL
+          {{- if $.Values.prosody.extraEnvs }}
+            {{- toYaml $.Values.prosody.extraEnvs | nindent 12 }}
+          {{- end }}
 {{ end }}

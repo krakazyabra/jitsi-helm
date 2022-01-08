@@ -11,7 +11,7 @@ metadata:
   namespace: {{ $.Values.namespace }}
   # needed for metacontroller to create/delete service per pod
   annotations:
-    service-per-pod-label: "statefulset.kubernetes.io/pod-name"
+    jitsi-service-per-pod-label: "statefulset.kubernetes.io/pod-name"
 spec:
   podManagementPolicy: Parallel
   replicas: {{ $.Values.jvb.replicas }}
@@ -43,10 +43,18 @@ spec:
         - http://localhost:8080/colibri/stats
         image: systemli/prometheus-jitsi-meet-exporter:1.1.6
         imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            port: 9888
+            path: "/health"
         name: prometheus-exporter
         ports:
         - containerPort: 9888
           name: metrics
+        readinessProbe:
+          httpGet:
+            port: 9888
+            path: "/health"
         resources:
           limits:
             cpu: 100m
@@ -56,7 +64,7 @@ spec:
             memory: 100Mi
       {{ end -}}
       - args:
-        - "30{{ add $shard 3 }}00"
+        - "{{ $.Values.jvb.nodeportPrefix }}{{ add $shard 3 }}00"
         - /init
         command:
         - /entrypoint/entrypoint.sh
@@ -66,7 +74,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: XMPP_SERVER
-          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}
+          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}.{{ $.Values.namespace }}.svc.cluster.local
         - name: DOCKER_HOST_ADDRESS
           valueFrom:
             fieldRef:
@@ -86,8 +94,8 @@ spec:
           value: focus
         - name: JVB_TCP_HARVESTER_DISABLED
           value: "false"
-        - name: JVB_ENABLE_APIS
-          value: colibri,rest
+        - name: COLIBRI_REST_ENABLED
+          value: "true"
         - name: JVB_AUTH_USER
           value: jvb
         - name: JVB_AUTH_PASSWORD
@@ -112,6 +120,13 @@ spec:
             secretKeyRef:
               name: jitsi-config
               key: PUBLIC_URL
+        - name: JVB_WS_SERVER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+      {{- if $.Values.jvb.extraEnvs }}
+        {{- toYaml $.Values.jvb.extraEnvs | nindent 8 }}
+      {{- end }}
         image: {{ $.Values.jvb.image }}
         imagePullPolicy: {{ $.Values.jvb.imagePullPolicy }}
         lifecycle:
@@ -122,6 +137,9 @@ spec:
               - /shutdown/graceful_shutdown.sh
               - -t 3
         name: jvb
+        ports:
+        - containerPort: 9090
+          name: websocket
         readinessProbe:
           httpGet:
             path: /about/health
