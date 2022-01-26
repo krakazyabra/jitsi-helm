@@ -45,17 +45,17 @@ spec:
           valueFrom:
             secretKeyRef:
               key: JICOFO_COMPONENT_SECRET
-              name: jitsi-config
+              name: jitsi-secrets
         - name: JICOFO_AUTH_USER
           value: focus
         - name: JICOFO_AUTH_PASSWORD
           valueFrom:
             secretKeyRef:
               key: JICOFO_AUTH_PASSWORD
-              name: jitsi-config
+              name: jitsi-secrets
         - name: TZ
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               key: TZ
               name: jitsi-config
         - name: JVB_BREWERY_MUC
