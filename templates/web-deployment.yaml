@@ -31,6 +31,10 @@ spec:
     {{- with $.Values.web.extraPodSpec }}
       {{- toYaml . | nindent 6 }}
     {{- end }}
+
+    {{- if $.Values.global.serviceAccount }}
+      serviceAccountName: {{ $.Values.global.serviceAccount }}
+    {{- end }}
       containers:
       - env:
         - name: DISABLE_HTTPS
