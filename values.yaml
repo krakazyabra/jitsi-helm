@@ -16,7 +16,7 @@ haproxy:
     # albGroup: global
 jicofo:
   name: jicofo
-  image: jitsi/jicofo:stable-5963
+  image: jitsi/jicofo:stable-6826
   imagePullPolicy: Always
   resources:
     requests:
@@ -30,7 +30,7 @@ jvb:
   # you can use this variable to have several Jitsi cluster running on a cluster
   # specifying "31" will use ports 31XXX
   nodeportPrefix: "30"
-  image: jitsi/jvb:stable-5963
+  image: jitsi/jvb:stable-6826
   imagePullPolicy: Always
   monitoringEnable: true
   sysctlDaemonSetEnable: true
@@ -41,7 +41,7 @@ jvb:
   extraEnvs: []
 prosody:
   name: prosody
-  image: jitsi/prosody:stable-5963
+  image: jitsi/prosody:stable-6826
   imagePullPolicy: Always
   monitoringEnable: true
   resources:
@@ -55,7 +55,7 @@ prosody:
   globalConfig: []
 web:
   name: web
-  image: jitsi/web:stable-5963
+  image: jitsi/web:stable-6826
   imagePullPolicy: Always
   ## kubectl create configmap -n <namespace> custom-config --from-file=custom-config.js
   customConfig: false
