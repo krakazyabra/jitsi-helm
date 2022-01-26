@@ -54,27 +54,46 @@ helm delete --purge jitsi
 
 The following table lists the configurable parameters of the Jitsi Meet chart and their default values.
 
-| Parameter                                               | Description                            | Default         |
-|---------------------------------------------------------|----------------------------------------|-----------------|
-| `shardCount`                                            | Number of shards                       | `2`             |
-| `namespace`                                             | Namespace                              | `jitsi`         |
-| `haproxy.name`                                          | Haproxy statefulset name               | `jitsi/jicofo`  |
-| `haproxy.image`                                         | Docker image                           | `haproxy:2.1`   |
-| `haproxy.ingressEnable`                                 | Enable ingress                         | `true`          |
-| `haproxy.ingress.host`                                  | Ingress host                           | `jitsi.domain.org`|
-| `haproxy.ingress.tlsEnable`                             | Enable TLS for ingress                 | `true`          |
-| `jicofo.name`                                           | Jicofo deployment name                 | `jicofo`        |
-| `jicofo.image`                                          | Jicofo docker image                    | `jitsi/jicofo`  |
-| `jicofo.imagePullPolicy`                                | Jicofo image pull policy               | `Always`        |
-| `jvb.name`                                              | JVB statefulset name                   | `jitsi/jvb`     |
-| `jvb.image`                                             | JVB docker image                       | `jitsi/jvb`     |
-| `jvb.image.imagePullPolicy`                             | JVB image pull policy                  | `Always`        |
-| `jvb.replicas`                                          | JVB replica count                      | `1`             |
-| `jvb.monitoringEnable`                                  | JVB exporter container                 | `true`          |
-| `prosody.name`                                          | Prosody deployment name                | `jitsi/prosody` |
-| `prosody.image`                                         | Prosody docker image                   | `jitsi/prosody` |
-| `prosody.image.imagePullPolicy`                         | Prosody image pull policy              | `Always`        |
-| `web.name`                                              | Web deployment name                    | `web`           |
-| `web.image`                                             | Web docker image                       | `jitsi/web`     |
-| `web.image.imagePullPolicy`                             | Web image pull policy                  | `Always`        |
-| `watermark`                                        | Watermark logo                        | `true`          |
+| Parameter                          | Description                                             | Default           |
+|------------------------------------|---------------------------------------------------------|-------------------|
+| `shardCount`                       | Number of shards                                        | `2`               |
+| `namespace`                        | Namespace                                               | `jitsi`           |
+| `metacontrollerNamespace`          | Namespace of the metacontroller. Empty if not deployed. | `metacontroller`  |
+| `haproxy.name`                     | Haproxy statefulset name                                | `jitsi/jicofo`    |
+| `haproxy.image`                    | Docker image                                            | `haproxy:2.1`     |
+| `haproxy.ingressEnable`            | Enable ingress                                          | `true`            |
+| `haproxy.ingress.host`             | Ingress host                                            | `jitsi.domain.org`|
+| `haproxy.ingress.tlsEnable`        | Enable TLS for ingress                                  | `true`            |
+| `jicofo.name`                      | Jicofo deployment name                                  | `jicofo`          |
+| `jicofo.image`                     | Jicofo docker image                                     | `jitsi/jicofo`    |
+| `jicofo.imagePullPolicy`           | Jicofo image pull policy                                | `Always`          |
+| `jicofo.extraEnvs`                 | Jicofo extra environment variables                      | `[]`              |
+| `jvb.name`                         | JVB statefulset name                                    | `jitsi/jvb`       |
+| `jvb.image`                        | JVB docker image                                        | `jitsi/jvb`       |
+| `jvb.image.imagePullPolicy`        | JVB image pull policy                                   | `Always`          |
+| `jvb.replicas`                     | JVB replica count                                       | `1`               |
+| `jvb.monitoringEnable`             | JVB exporter container                                  | `true`            |
+| `jvb.nodeportPrefix`               | JVB Node port prefix                                    | `30`              |
+| `jvb.extraEnvs`                    | JVB extra environment variables                         | `[]`              |
+| `prosody.name`                     | Prosody deployment name                                 | `jitsi/prosody`   |
+| `prosody.image`                    | Prosody docker image                                    | `jitsi/prosody`   |
+| `prosody.image.imagePullPolicy`    | Prosody image pull policy                               | `Always`          |
+| `prosody.extraEnvs`                | Extra env var for prosody deployment                    | `[]`              |
+| `prosody.extraVolumes`             | Additionnal volumes to the prosody deployment           | `[]`              |
+| `prosody.extraVolumeMounts`        | Additional volume mounts to the prosody deployment      | `[]`              |
+| `prosody.globalModules`            | Additional global modules to enable on prosody          | `[]`              |
+| `prosody.globalConfig`             | Additional global config parameters on prosody          | `[]`              |
+| `web.name`                         | Web deployment name                                     | `web`             |
+| `web.image`                        | Web docker image                                        | `jitsi/web`       |
+| `web.image.imagePullPolicy`        | Web image pull policy                                   | `Always`          |
+| `web.extraEnvs`                    | Extra env var for web deployment                        | `[]`              |
+| `web.extraVolumes`                 | Additionnal volumes to the web deployment               | `[]`              |
+| `web.extraVolumeMounts`            | Additional volume mounts to the web deployment          | `[]`              |
+| `watermark`                        | Watermark logo                                          | `true`            |
+
+## Running two jitsi instances inside the same cluster
+
+1. The first instance should be deployed with the metacontroller
+2. The second instance should be deployed with specific settings : 
+  - `metacontrollerNamespace` should be kept empty to avoid deploying a second metacontroller
+  - `jvb.nodeportPrefix` should use a different value from `30` to avoid ports conflicts

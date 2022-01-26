@@ -22,9 +22,14 @@ jicofo:
     requests:
       cpu: 400m
       memory: 400Mi
+  extraEnvs: []
 jvb:
   name: jvb
   replicas: 2
+  # Nodeports 30XXX will be used by default
+  # you can use this variable to have several Jitsi cluster running on a cluster
+  # specifying "31" will use ports 31XXX
+  nodeportPrefix: "30"
   image: jitsi/jvb:stable-5963
   imagePullPolicy: Always
   monitoringEnable: true
@@ -33,6 +38,7 @@ jvb:
     requests:
       cpu: 3000m
       memory: 3000Mi
+  extraEnvs: []
 prosody:
   name: prosody
   image: jitsi/prosody:stable-5963
@@ -42,6 +48,11 @@ prosody:
     requests:
       memory: 300Mi
       cpu: 300m
+  extraEnvs: []
+  extraVolumes: []
+  extraVolumeMounts: []
+  globalModules: []
+  globalConfig: []
 web:
   name: web
   image: jitsi/web:stable-5963
@@ -60,6 +71,13 @@ web:
     requests:
       cpu: 400m
       memory: 300Mi
+  extraEnvs: []
+  extraVolumes: []
+  extraVolumeMounts: []
+
+# if empty, the metacontroller will not be installed
+# can be used to instantiate several Jitsi clusters on one Kubernetes cluster
+metacontrollerNamespace: metacontroller
 
 JICOFO_AUTH_PASSWORD: ""
 JICOFO_COMPONENT_SECRET: ""

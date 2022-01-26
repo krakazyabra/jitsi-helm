@@ -38,7 +38,7 @@ spec:
         - name: HTTP_PORT
           value: "80"
         - name: XMPP_SERVER
-          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}
+          value: shard-{{ $shard }}-{{ $.Values.prosody.name }}.{{ $.Values.namespace }}.svc.cluster.local
         - name: JICOFO_AUTH_USER
           value: focus
         - name: XMPP_DOMAIN
@@ -48,7 +48,7 @@ spec:
         - name: XMPP_INTERNAL_MUC_DOMAIN
           value: internal-muc.meet.jitsi
         - name: XMPP_BOSH_URL_BASE
-          value: http://shard-{{ $shard }}-{{ $.Values.prosody.name }}:5280
+          value: http://shard-{{ $shard }}-{{ $.Values.prosody.name }}.{{ $.Values.namespace }}.svc.cluster.local:5280
         - name: XMPP_MUC_DOMAIN
           value: muc.meet.jitsi
         - name: TZ
@@ -61,6 +61,9 @@ spec:
             secretKeyRef:
               name: jitsi-config
               key: PUBLIC_URL
+      {{- if $.Values.web.extraEnvs }}
+        {{- toYaml $.Values.web.extraEnvs | nindent 8 }}
+      {{- end }}
         image: {{ $.Values.web.image }}
         imagePullPolicy: {{ $.Values.web.imagePullPolicy }}
         name: web
@@ -97,6 +100,9 @@ spec:
           name: watermark
           subPath: watermark.png
         {{ end }}
+      {{- if $.Values.web.extraVolumeMounts }}
+        {{- toYaml $.Values.web.extraVolumeMounts | nindent 8 }}
+      {{- end }}
       volumes:
       {{- if $.Values.web.customConfig }}
       - configMap:
@@ -138,4 +144,7 @@ spec:
           name: watermark
         name: watermark
       {{ end }}
+    {{- if $.Values.web.extraVolumes }}
+      {{- toYaml $.Values.web.extraVolumes | nindent 6 }}
+    {{- end }}
 {{ end }}
