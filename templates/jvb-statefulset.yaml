@@ -96,6 +96,8 @@ spec:
           value: "false"
         - name: COLIBRI_REST_ENABLED
           value: "true"
+        - name: SHUTDOWN_REST_ENABLED
+          value: "true"
         - name: JVB_AUTH_USER
           value: jvb
         - name: JVB_AUTH_PASSWORD
