@@ -90,8 +90,6 @@ spec:
             secretKeyRef:
               key: JVB_STUN_SERVERS
               name: jitsi-config
-        - name: JICOFO_AUTH_USER
-          value: focus
         - name: JVB_TCP_HARVESTER_DISABLED
           value: "false"
         - name: COLIBRI_REST_ENABLED
@@ -102,11 +100,6 @@ spec:
           valueFrom:
             secretKeyRef:
               key: JVB_AUTH_PASSWORD
-              name: jitsi-config
-        - name: JICOFO_AUTH_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: JICOFO_AUTH_PASSWORD
               name: jitsi-config
         - name: JVB_BREWERY_MUC
           value: jvbbrewery
