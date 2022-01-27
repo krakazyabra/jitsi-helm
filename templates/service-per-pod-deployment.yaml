@@ -17,6 +17,9 @@ spec:
         k8s-app: jitsi-service-per-pod
         scope: jitsi
     spec:
+    {{- if $.Values.global.metacontrollerServiceAccount -}}
+      serviceAccountName: {{ $.Values.global.metacontrollerServiceAccount }}
+    {{- end }}
       containers:
       - name: hooks
         image: metacontroller/jsonnetd:0.1

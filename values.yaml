@@ -1,3 +1,11 @@
+global:
+  # Uncomment and set these if you need to use privileged
+  # service accounts for s6-overlay's UID/GID switching
+  # at initialization time
+
+  # serviceAccount: "default"
+  # metacontrollerServiceAccount: "metacontroller"
+
 shardCount: 1
 namespace: jitsi
 
