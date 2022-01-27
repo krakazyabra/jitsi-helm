@@ -87,11 +87,9 @@ spec:
           value: internal-muc.meet.jitsi
         - name: JVB_STUN_SERVERS
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               key: JVB_STUN_SERVERS
               name: jitsi-config
-        - name: JICOFO_AUTH_USER
-          value: focus
         - name: JVB_TCP_HARVESTER_DISABLED
           value: "false"
         - name: COLIBRI_REST_ENABLED
@@ -104,22 +102,17 @@ spec:
           valueFrom:
             secretKeyRef:
               key: JVB_AUTH_PASSWORD
-              name: jitsi-config
-        - name: JICOFO_AUTH_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: JICOFO_AUTH_PASSWORD
-              name: jitsi-config
+              name: jitsi-secrets
         - name: JVB_BREWERY_MUC
           value: jvbbrewery
         - name: TZ
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               key: TZ
               name: jitsi-config
         - name: PUBLIC_URL
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               name: jitsi-config
               key: PUBLIC_URL
         - name: JVB_WS_SERVER_ID

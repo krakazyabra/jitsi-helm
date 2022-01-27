@@ -53,12 +53,12 @@ spec:
           value: muc.meet.jitsi
         - name: TZ
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               key: TZ
               name: jitsi-config
         - name: PUBLIC_URL
           valueFrom:
-            secretKeyRef:
+            configMapKeyRef:
               name: jitsi-config
               key: PUBLIC_URL
       {{- if $.Values.web.extraEnvs }}

@@ -103,25 +103,25 @@ spec:
             - name: JICOFO_COMPONENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: jitsi-config
+                  name: jitsi-secrets
                   key: JICOFO_COMPONENT_SECRET
             - name: JVB_AUTH_USER
               value: jvb
             - name: JVB_AUTH_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: jitsi-config
+                  name: jitsi-secrets
                   key: JVB_AUTH_PASSWORD
             - name: JICOFO_AUTH_USER
               value: focus
             - name: JICOFO_AUTH_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: jitsi-config
+                  name: jitsi-secrets
                   key: JICOFO_AUTH_PASSWORD
             - name: TZ
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   name: jitsi-config
                   key: TZ
             {{ if $.Values.prosody.monitoringEnable }}
@@ -143,7 +143,7 @@ spec:
             {{ end }}
             - name: PUBLIC_URL
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   name: jitsi-config
                   key: PUBLIC_URL
           {{- if $.Values.prosody.extraEnvs }}

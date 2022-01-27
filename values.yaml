@@ -79,6 +79,7 @@ web:
 # can be used to instantiate several Jitsi clusters on one Kubernetes cluster
 metacontrollerNamespace: metacontroller
 
+createSecret: true
 JICOFO_AUTH_PASSWORD: ""
 JICOFO_COMPONENT_SECRET: ""
 JVB_AUTH_PASSWORD: ""
