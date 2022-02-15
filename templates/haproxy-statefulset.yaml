@@ -20,8 +20,8 @@ spec:
       {{- toYaml . | nindent 6 }}
     {{- end }}
     
-    {{- if $.Values.global.serviceAccount }}
-      serviceAccountName: {{ $.Values.global.serviceAccount }}
+    {{- if (($.Values.global).serviceAccount) }}
+      serviceAccountName: {{ (($.Values.global).serviceAccount) }}
     {{- end }}
       affinity:
         podAntiAffinity:
