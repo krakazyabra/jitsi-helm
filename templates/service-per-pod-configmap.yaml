@@ -27,7 +27,7 @@ data:
                              c for c in statefulset.spec.template.spec.containers
                              if c.name == 'jvb'
                            ][0].args
-                           if std.startsWith(a, '3') && std.length(a) == 5][0]),
+                           if std.length(a) == 5][0]),
 
       // create a service for each pod, with a selector on the given label key
       attachments: [

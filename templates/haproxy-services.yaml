@@ -22,6 +22,8 @@ spec:
   ports:
   - name: peering
     port: 1024
+  selector:
+   statefulset.kubernetes.io/pod-name: {{ $.Values.haproxy.name }}-0
   type: ClusterIP
 ---
 apiVersion: v1
@@ -33,4 +35,6 @@ spec:
   ports:
   - name: peering
     port: 1024
+  selector:
+   statefulset.kubernetes.io/pod-name: {{ $.Values.haproxy.name }}-1
   type: ClusterIP

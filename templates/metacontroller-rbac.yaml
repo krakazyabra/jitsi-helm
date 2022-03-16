@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ $.Values.global.metacontrollerServiceAccount | default "metacontroller" }}
+  name: {{ (($.Values.global).metacontrollerServiceAccount) | default "metacontroller" }}
   namespace: {{ $.Values.metacontrollerNamespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -23,7 +23,7 @@ metadata:
   name: metacontroller
 subjects:
 - kind: ServiceAccount
-  name: {{ $.Values.global.metacontrollerServiceAccount | default "metacontroller" }}
+  name: {{ (($.Values.global).metacontrollerServiceAccount) | default "metacontroller" }}
   namespace: {{ $.Values.metacontrollerNamespace }}
 roleRef:
   kind: ClusterRole
