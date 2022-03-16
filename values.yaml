@@ -14,7 +14,7 @@ namespace: jitsi
 
 haproxy:
   name: haproxy
-  image: haproxy:2.3
+  image: haproxy:2.4
   ingressEnable: true
   ingress:
     # can be alb
