@@ -40,7 +40,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    {{- if $.Values.haproxy.certmanager.issuer }}
+    cert-manager.io/cluster-issuer: {{ $.Values.haproxy.certmanager.issuer }}
+    {{- end }}
     kubernetes.io/ingress.class: {{ $.Values.haproxy.ingress.class }}
   name: ingress
   namespace: {{ $.Values.namespace }}

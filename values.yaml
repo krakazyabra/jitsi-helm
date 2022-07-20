@@ -22,6 +22,8 @@ haproxy:
     host: jitsi.example.org
     tlsEnable: true
     # albGroup: global
+  certmanager:
+    issuer: letsencrypt-prod
 jicofo:
   name: jicofo
   image: jitsi/jicofo:stable-6826
