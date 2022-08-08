@@ -41,7 +41,7 @@ spec:
       - args:
         - -videobridge-url
         - http://localhost:8080/colibri/stats
-        image: systemli/prometheus-jitsi-meet-exporter:1.1.6
+        image: systemli/prometheus-jitsi-meet-exporter:1.2.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
