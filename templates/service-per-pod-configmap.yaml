@@ -50,17 +50,10 @@ data:
             ports: [
               {
                 "name": "jvb-udp",
-                "port": basePort + (index*2),
+                "port": basePort + index,
                 "protocol": "UDP",
-                "targetPort": basePort + (index*2),
-                "nodePort": basePort + (index*2)
-              },
-              {
-                "name": "jvb-tcp",
-                "port": basePort + (index*2) + 1,
-                "protocol": "TCP",
-                "targetPort": basePort + (index*2) + 1,
-                "nodePort": basePort + (index*2) + 1
+                "targetPort": basePort + index,
+                "nodePort": basePort + index
               }
             ]
           }

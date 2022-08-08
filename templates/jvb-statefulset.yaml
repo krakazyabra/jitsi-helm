@@ -41,7 +41,7 @@ spec:
       - args:
         - -videobridge-url
         - http://localhost:8080/colibri/stats
-        image: systemli/prometheus-jitsi-meet-exporter:1.1.6
+        image: systemli/prometheus-jitsi-meet-exporter:1.2.0
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -90,8 +90,6 @@ spec:
             configMapKeyRef:
               key: JVB_STUN_SERVERS
               name: jitsi-config
-        - name: JVB_TCP_HARVESTER_DISABLED
-          value: "false"
         - name: COLIBRI_REST_ENABLED
           value: "true"
         - name: SHUTDOWN_REST_ENABLED
