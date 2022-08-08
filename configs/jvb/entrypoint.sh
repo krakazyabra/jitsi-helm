@@ -10,12 +10,7 @@ else
 fi
 
 # add jvb ID to the base port (e.g. 30300 + 1 = 30301)
-export JVB_PORT=$(($BASE_PORT+${HOSTNAME##*-}*2))
+export JVB_PORT=$(($BASE_PORT+${HOSTNAME##*-}))
 echo "JVB_PORT=$JVB_PORT"
-
-export JVB_TCP_PORT=$(($JVB_PORT+1))
-export JVB_TCP_MAPPED_PORT=$JVB_TCP_PORT
-
-echo "org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true" >> /defaults/sip-communicator.properties
 
 exec "$@"
