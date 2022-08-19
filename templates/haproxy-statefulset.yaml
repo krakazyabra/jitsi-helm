@@ -15,6 +15,8 @@ spec:
     metadata:
       labels:
         k8s-app: {{ $.Values.haproxy.name }}
+      annotations:
+        checksum/config: {{ tpl (.Files.Get "configs/haproxy/haproxy.cfg") . | sha256sum }}
     spec:
     {{- with $.Values.haproxy.extraPodSpec }}
       {{- toYaml . | nindent 6 }}
