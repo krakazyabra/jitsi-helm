@@ -27,8 +27,9 @@ spec:
         k8s-app: {{ $.Values.jvb.name }}
         scope: jitsi
         shard: {{ $shard | quote }}
-      {{ if $.Values.jvb.monitoringEnable }}
       annotations:
+        kubectl.kubernetes.io/default-container: jvb
+      {{ if $.Values.jvb.monitoringEnable }}
         prometheus.io/scrape: "true"
         prometheus.io/port: "9888"
       {{ end }}
