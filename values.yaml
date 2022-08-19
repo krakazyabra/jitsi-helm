@@ -8,9 +8,6 @@ global:
 shardCount: 1
 namespace: jitsi
 
-# extraPodSpec can be used to add tolerations and placement hints
-# to any of the following components
-
 haproxy:
   name: haproxy
   image: haproxy:2.4
@@ -23,6 +20,7 @@ haproxy:
     # albGroup: global
   certmanager:
     issuer: letsencrypt-prod
+  extraPodSpec: {}
 jicofo:
   name: jicofo
   image: jitsi/jicofo:stable-7648-2
@@ -32,6 +30,7 @@ jicofo:
       cpu: 400m
       memory: 400Mi
   extraEnvs: []
+  extraPodSpec: {}
 jvb:
   name: jvb
   replicas: 2
@@ -49,6 +48,7 @@ jvb:
       cpu: 3000m
       memory: 3000Mi
   extraEnvs: []
+  extraPodSpec: {}
 prosody:
   name: prosody
   image: jitsi/prosody:stable-7648-2
@@ -59,6 +59,7 @@ prosody:
       memory: 300Mi
       cpu: 300m
   extraEnvs: []
+  extraPodSpec: {}
   extraVolumes: []
   extraVolumeMounts: []
   globalModules: []
@@ -83,6 +84,7 @@ web:
       cpu: 400m
       memory: 300Mi
   extraEnvs: []
+  extraPodSpec: {}
   extraVolumes: []
   extraVolumeMounts: []
 
