@@ -4,7 +4,6 @@ global:
   # at initialization time
 
   # serviceAccount: "default"
-  # metacontrollerServiceAccount: "metacontroller"
 
 shardCount: 1
 namespace: jitsi
@@ -84,10 +83,6 @@ web:
   extraEnvs: []
   extraVolumes: []
   extraVolumeMounts: []
-
-# if empty, the metacontroller will not be installed
-# can be used to instantiate several Jitsi clusters on one Kubernetes cluster
-metacontrollerNamespace: metacontroller
 
 createSecret: true
 JICOFO_AUTH_PASSWORD: ""

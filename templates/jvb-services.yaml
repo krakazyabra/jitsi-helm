@@ -1,4 +1,3 @@
-{{ if eq $.Values.metacontrollerNamespace "" -}}
 {{- range $shard, $e := until (int $.Values.shardCount) }}
 {{- range $replica, $f := until (int $.Values.jvb.replicas) }}
 ---
@@ -47,6 +46,5 @@ spec:
     statefulset.kubernetes.io/pod-name: shard-{{ $shard }}-{{ $.Values.jvb.name }}-{{ $replica }}
     scope: jitsi
     shard: {{ $shard | quote }}
-{{ end -}}
 {{ end -}}
 {{ end -}}

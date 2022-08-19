@@ -9,9 +9,6 @@ metadata:
     shard: {{ $shard | quote }}
   name: shard-{{ $shard }}-{{ $.Values.jvb.name }}
   namespace: {{ $.Values.namespace }}
-  # needed for metacontroller to create/delete service per pod
-  annotations:
-    jitsi-service-per-pod-label: "statefulset.kubernetes.io/pod-name"
 spec:
   podManagementPolicy: Parallel
   replicas: {{ $.Values.jvb.replicas }}
