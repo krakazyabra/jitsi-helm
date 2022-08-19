@@ -1,0 +1,52 @@
+{{ if eq $.Values.metacontrollerNamespace "" -}}
+{{- range $shard, $e := until (int $.Values.shardCount) }}
+{{- range $replica, $f := until (int $.Values.jvb.replicas) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    scope: jitsi
+    service: jvb
+    shard: {{ $shard | quote }}
+    replica: {{ $replica | quote }}
+  name: shard-{{ $shard }}-{{ $.Values.jvb.name }}-{{ $replica }}-ice
+  namespace: {{ $.Values.namespace }}
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+  - name: "jvb-udp"
+    protocol: "UDP"
+    port: {{ $.Values.jvb.nodeportPrefix }}{{ add $shard 3 }}{{ printf "%02d" $replica }}
+    targetPort: {{ $.Values.jvb.nodeportPrefix }}{{ add $shard 3 }}{{ printf "%02d" $replica }}
+    nodePort: {{ $.Values.jvb.nodeportPrefix }}{{ add $shard 3 }}{{ printf "%02d" $replica }}
+  selector:
+    statefulset.kubernetes.io/pod-name: shard-{{ $shard }}-{{ $.Values.jvb.name }}-{{ $replica }}
+    scope: jitsi
+    shard: {{ $shard | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    scope: jitsi
+    service: jvb
+    shard: {{ $shard | quote }}
+    replica: {{ $replica | quote }}
+  name: shard-{{ $shard }}-{{ $.Values.jvb.name }}-{{ $replica }}-metrics
+  namespace: {{ $.Values.namespace }}
+spec:
+  type: ClusterIP
+  ports:
+  - name: "metrics"
+    protocol: "TCP"
+    port: 9888
+    targetPort: metrics
+  selector:
+    statefulset.kubernetes.io/pod-name: shard-{{ $shard }}-{{ $.Values.jvb.name }}-{{ $replica }}
+    scope: jitsi
+    shard: {{ $shard | quote }}
+{{ end -}}
+{{ end -}}
+{{ end -}}
