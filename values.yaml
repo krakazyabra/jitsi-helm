@@ -35,6 +35,7 @@ jicofo:
 jvb:
   name: jvb
   replicas: 2
+  # Specify hostPort to use hostPort and not nodePort
   # Nodeports 30XXX will be used by default
   # you can use this variable to have several Jitsi cluster running on a cluster
   # specifying "31" will use ports 31XXX

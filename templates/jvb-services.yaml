@@ -1,5 +1,6 @@
 {{- range $shard, $e := until (int $.Values.shardCount) }}
 {{- range $replica, $f := until (int $.Values.jvb.replicas) }}
+{{ if empty $.Values.jvb.hostPort }}
 ---
 apiVersion: v1
 kind: Service
@@ -24,6 +25,7 @@ spec:
     statefulset.kubernetes.io/pod-name: shard-{{ $shard }}-{{ $.Values.jvb.name }}-{{ $replica }}
     scope: jitsi
     shard: {{ $shard | quote }}
+{{ end -}}
 ---
 apiVersion: v1
 kind: Service

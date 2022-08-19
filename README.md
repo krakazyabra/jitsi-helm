@@ -72,6 +72,7 @@ The following table lists the configurable parameters of the Jitsi Meet chart an
 | `jvb.image.imagePullPolicy`        | JVB image pull policy                                   | `Always`          |
 | `jvb.replicas`                     | JVB replica count                                       | `1`               |
 | `jvb.monitoringEnable`             | JVB exporter container                                  | `true`            |
+| `jvb.hostPort`                     | JVB hostPort                                            | empty             |
 | `jvb.nodeportPrefix`               | JVB Node port prefix                                    | `30`              |
 | `jvb.extraEnvs`                    | JVB extra environment variables                         | `[]`              |
 | `prosody.name`                     | Prosody deployment name                                 | `jitsi/prosody`   |
@@ -93,4 +94,5 @@ The following table lists the configurable parameters of the Jitsi Meet chart an
 ## Running two jitsi instances inside the same cluster
 
 1. The second instance should be deployed with specific settings :
-  - `jvb.nodeportPrefix` should use a different value from `30` to avoid ports conflicts
+  - `jvb.nodeportPrefix` should use a different value from `30` to avoid ports conflicts or
+  - `jvb.hostPort` that's distinct from other installations

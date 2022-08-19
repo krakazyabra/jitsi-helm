@@ -62,7 +62,9 @@ spec:
             memory: 100Mi
       {{ end -}}
       - args:
+      {{- if empty $.Values.jvb.hostPort }}
         - "{{ $.Values.jvb.nodeportPrefix }}{{ add $shard 3 }}00"
+      {{- end }}
         - /init
         command:
         - /entrypoint/entrypoint.sh
@@ -131,6 +133,12 @@ spec:
         ports:
         - containerPort: 9090
           name: websocket
+      {{- if not (empty $.Values.jvb.hostPort) }}
+        - containerPort: {{ $.Values.jvb.hostPort }}
+          name: ice
+          hostPort: {{ $.Values.jvb.hostPort }}
+          protocol: UDP
+      {{- end }}
         readinessProbe:
           httpGet:
             path: /about/health
