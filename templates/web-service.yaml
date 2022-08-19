@@ -1,13 +1,15 @@
+{{- range $shard, $e := until (int $.Values.shardCount) }}
+---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     scope: jitsi
     service: {{ $.Values.web.name }}
-  name: {{ $.Values.web.name }}
+    shard: {{ $shard | quote}}
+  name: shard-{{ $shard }}-{{ $.Values.web.name }}
   namespace: {{ $.Values.namespace }}
 spec:
-  clusterIP: None
   ports:
   - name: http
     port: 80
@@ -15,3 +17,5 @@ spec:
   selector:
     k8s-app: {{ $.Values.web.name }}
     scope: jitsi
+    shard: {{ $shard | quote}}
+{{- end }}
