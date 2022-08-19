@@ -58,7 +58,6 @@ The following table lists the configurable parameters of the Jitsi Meet chart an
 |------------------------------------|---------------------------------------------------------|-------------------|
 | `shardCount`                       | Number of shards                                        | `2`               |
 | `namespace`                        | Namespace                                               | `jitsi`           |
-| `metacontrollerNamespace`          | Namespace of the metacontroller. Empty if not deployed. | `metacontroller`  |
 | `haproxy.name`                     | Haproxy statefulset name                                | `jitsi/jicofo`    |
 | `haproxy.image`                    | Docker image                                            | `haproxy:2.1`     |
 | `haproxy.ingressEnable`            | Enable ingress                                          | `true`            |
@@ -93,7 +92,5 @@ The following table lists the configurable parameters of the Jitsi Meet chart an
 
 ## Running two jitsi instances inside the same cluster
 
-1. The first instance should be deployed with the metacontroller
-2. The second instance should be deployed with specific settings : 
-  - `metacontrollerNamespace` should be kept empty to avoid deploying a second metacontroller
+1. The second instance should be deployed with specific settings :
   - `jvb.nodeportPrefix` should use a different value from `30` to avoid ports conflicts
