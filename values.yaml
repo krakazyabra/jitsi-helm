@@ -65,6 +65,7 @@ prosody:
   globalConfig: []
 web:
   name: web
+  replicas: 2
   image: jitsi/web:stable-7648-2
   imagePullPolicy: Always
   ## kubectl create configmap -n <namespace> custom-config --from-file=custom-config.js

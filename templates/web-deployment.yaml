@@ -10,7 +10,7 @@ metadata:
   name: shard-{{ $shard }}-{{ $.Values.web.name }}
   namespace: {{ $.Values.namespace }}
 spec:
-  replicas: 1
+  replicas: {{ $.Values.web.replicas }}
   selector:
     matchLabels:
       k8s-app: {{ $.Values.web.name }}
