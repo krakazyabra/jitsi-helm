@@ -71,6 +71,10 @@ spec:
         image: {{ $.Values.web.image }}
         imagePullPolicy: {{ $.Values.web.imagePullPolicy }}
         name: web
+        ports:
+        - containerPort: 80
+          protocol: TCP
+          name: http
         readinessProbe:
           httpGet:
             port: 80

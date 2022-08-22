@@ -134,7 +134,10 @@ spec:
         name: jvb
         ports:
         - containerPort: 9090
-          name: websocket
+          name: public-http
+        - containerPort: 8080
+          name: private-http
+          protocol: TCP
       {{- if not (empty $.Values.jvb.hostPort) }}
         - containerPort: {{ $.Values.jvb.hostPort }}
           name: ice

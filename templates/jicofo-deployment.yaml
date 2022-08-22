@@ -71,6 +71,10 @@ spec:
         image: {{ $.Values.jicofo.image }}
         imagePullPolicy: {{ $.Values.jicofo.imagePullPolicy }}
         name: jicofo
+        ports:
+        - containerPort: 8888
+          protocol: TCP
+          name: rest
         # readinessProbe:
         #   httpGet:
         #     path: /about/health
