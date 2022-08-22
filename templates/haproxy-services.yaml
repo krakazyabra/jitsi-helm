@@ -7,8 +7,10 @@ spec:
   ports:
   - name: http
     port: 8080
+    targetPort: http
   - name: metrics
     port: 9090
+    targetPort: metrics
   selector:
     k8s-app: {{ $.Values.haproxy.name }}
   type: ClusterIP
@@ -22,6 +24,7 @@ spec:
   ports:
   - name: peering
     port: 1024
+    targetPort: peering
   selector:
    statefulset.kubernetes.io/pod-name: {{ $.Values.haproxy.name }}-0
   type: ClusterIP
@@ -35,6 +38,7 @@ spec:
   ports:
   - name: peering
     port: 1024
+    targetPort: peering
   selector:
    statefulset.kubernetes.io/pod-name: {{ $.Values.haproxy.name }}-1
   type: ClusterIP

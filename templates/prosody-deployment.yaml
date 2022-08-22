@@ -63,10 +63,22 @@ spec:
           imagePullPolicy: {{ $.Values.prosody.imagePullPolicy }}
           {{ if $.Values.prosody.monitoringEnable -}}
           ports:
-            - name: metrics
-              containerPort: 5280
+          - containerPort: 5280
+            protocol: TCP
+            name: http
+          - containerPort: 5222
+            protocol: TCP
+            name: c2s
           {{ end -}}
           readinessProbe:
+            ## the command that is called obeys standard exit codes
+            exec:
+              command:
+                - prosodyctl
+                - --config
+                - /config/prosody.cfg.lua
+                - status
+          startupProbe:
             ## the command that is called obeys standard exit codes
             exec:
               command:

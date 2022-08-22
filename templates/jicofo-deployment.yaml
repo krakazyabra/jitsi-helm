@@ -64,17 +64,27 @@ spec:
         - name: JVB_BREWERY_MUC
           value: jvbbrewery
         - name: JICOFO_ENABLE_HEALTH_CHECKS
-          value: "false"
+          value: "true"
       {{- if $.Values.jicofo.extraEnvs }}
         {{- toYaml $.Values.jicofo.extraEnvs | nindent 8 }}
       {{- end }}
         image: {{ $.Values.jicofo.image }}
         imagePullPolicy: {{ $.Values.jicofo.imagePullPolicy }}
         name: jicofo
-        # readinessProbe:
-        #   httpGet:
-        #     path: /about/health
-        #     port: 8888
+        ports:
+        - containerPort: 8888
+          protocol: TCP
+          name: rest
+        # We don't use /about/health for these probes as that queries whether the JVBs are active
+        # We don't want to restart Jicofo just because there are no JVBs
+        livenessProbe:
+           httpGet:
+             path: /about/version
+             port: rest
+        startupProbe:
+          httpGet:
+            path: /about/version
+            port: rest
       {{- with $.Values.jicofo.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

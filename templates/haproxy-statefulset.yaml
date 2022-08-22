@@ -50,6 +50,14 @@ spec:
           name: metrics
         - containerPort: 1024
           name: peering
+        readinessProbe:
+          httpGet:
+            path: /stats
+            port: metrics
+        startupProbe:
+          httpGet:
+            path: /stats
+            port: metrics
         volumeMounts:
         - mountPath: /usr/local/etc/haproxy/haproxy.cfg
           name: haproxy-config

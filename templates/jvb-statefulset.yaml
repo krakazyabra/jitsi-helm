@@ -43,7 +43,7 @@ spec:
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
-            port: 9888
+            port: metrics
             path: "/health"
         name: prometheus-exporter
         ports:
@@ -51,7 +51,7 @@ spec:
           name: metrics
         readinessProbe:
           httpGet:
-            port: 9888
+            port: metrics
             path: "/health"
         resources:
           limits:
@@ -136,7 +136,10 @@ spec:
         name: jvb
         ports:
         - containerPort: 9090
-          name: websocket
+          name: public-http
+        - containerPort: 8080
+          name: private-http
+          protocol: TCP
       {{- if not (empty $.Values.jvb.hostPort) }}
         - containerPort: {{ $.Values.jvb.hostPort }}
           name: ice
@@ -146,8 +149,11 @@ spec:
         readinessProbe:
           httpGet:
             path: /about/health
-            port: 8080
-          initialDelaySeconds: 10
+            port: private-http
+        startupProbe:
+          httpGet:
+            path: /about/health
+            port: private-http
       {{- with $.Values.jvb.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

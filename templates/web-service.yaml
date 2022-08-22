@@ -13,7 +13,7 @@ spec:
   ports:
   - name: http
     port: 80
-    targetPort: 80
+    targetPort: http
   selector:
     k8s-app: {{ $.Values.web.name }}
     scope: jitsi
