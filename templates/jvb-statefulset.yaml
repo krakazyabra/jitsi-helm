@@ -43,7 +43,7 @@ spec:
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
-            port: 9888
+            port: metrics
             path: "/health"
         name: prometheus-exporter
         ports:
@@ -51,7 +51,7 @@ spec:
           name: metrics
         readinessProbe:
           httpGet:
-            port: 9888
+            port: metrics
             path: "/health"
         resources:
           limits:
@@ -147,7 +147,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /about/health
-            port: 8080
+            port: private-http
           initialDelaySeconds: 10
       {{- with $.Values.jvb.resources }}
         resources:

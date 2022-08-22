@@ -78,7 +78,7 @@ spec:
         # readinessProbe:
         #   httpGet:
         #     path: /about/health
-        #     port: 8888
+        #     port: rest
       {{- with $.Values.jicofo.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

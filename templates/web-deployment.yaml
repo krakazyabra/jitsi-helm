@@ -77,7 +77,7 @@ spec:
           name: http
         readinessProbe:
           httpGet:
-            port: 80
+            port: http
       {{- with $.Values.web.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
