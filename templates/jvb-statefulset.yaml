@@ -75,10 +75,12 @@ spec:
               fieldPath: metadata.name
         - name: XMPP_SERVER
           value: shard-{{ $shard }}-{{ $.Values.prosody.name }}.{{ $.Values.namespace }}.svc.cluster.local
+      {{- if $.Values.jvb.provideNodeAddressAsPublicIP }}
         - name: DOCKER_HOST_ADDRESS
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+      {{- end }}
         - name: XMPP_DOMAIN
           value: meet.jitsi
         - name: XMPP_AUTH_DOMAIN

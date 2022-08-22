@@ -45,6 +45,10 @@ jvb:
   imagePullPolicy: Always
   monitoringEnable: true
   sysctlDaemonSetEnable: true
+  # In most k8s environments this will be a private IP and in most deployments, users will connect to a public ip
+  # so this won't provide a usable IP for users to connect to.
+  # Will rely on STUN providing the correct public IP if set to false.
+  provideNodeAddressAsPublicIP: false
   resources:
     requests:
       cpu: 3000m
