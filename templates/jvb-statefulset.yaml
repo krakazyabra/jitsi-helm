@@ -117,6 +117,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: JVB_ADVERTISE_PRIVATE_CANDIDATES
+          value: "false"
       {{- if $.Values.jvb.extraEnvs }}
         {{- toYaml $.Values.jvb.extraEnvs | nindent 8 }}
       {{- end }}
