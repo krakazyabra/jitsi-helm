@@ -148,7 +148,10 @@ spec:
           httpGet:
             path: /about/health
             port: private-http
-          initialDelaySeconds: 10
+        startupProbe:
+          httpGet:
+            path: /about/health
+            port: private-http
       {{- with $.Values.jvb.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

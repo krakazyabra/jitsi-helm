@@ -78,6 +78,14 @@ spec:
                 - --config
                 - /config/prosody.cfg.lua
                 - status
+          startupProbe:
+            ## the command that is called obeys standard exit codes
+            exec:
+              command:
+                - prosodyctl
+                - --config
+                - /config/prosody.cfg.lua
+                - status
           volumeMounts:
           {{ if $.Values.prosody.monitoringEnable -}}
           # add-ons that allow exporting of metrics to prometheus (mod_prometheus.lua)

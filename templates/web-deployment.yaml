@@ -77,6 +77,11 @@ spec:
           name: http
         readinessProbe:
           httpGet:
+            path: /robots.txt
+            port: http
+        startupProbe:
+          httpGet:
+            path: /robots.txt
             port: http
       {{- with $.Values.web.resources }}
         resources:
