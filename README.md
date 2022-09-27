@@ -60,9 +60,11 @@ The following table lists the configurable parameters of the Jitsi Meet chart an
 | `namespace`                        | Namespace                                               | `jitsi`           |
 | `haproxy.name`                     | Haproxy statefulset name                                | `jitsi/jicofo`    |
 | `haproxy.image`                    | Docker image                                            | `haproxy:2.1`     |
-| `haproxy.ingressEnable`            | Enable ingress                                          | `true`            |
-| `haproxy.ingress.host`             | Ingress host                                            | `jitsi.domain.org`|
-| `haproxy.ingress.tlsEnable`        | Enable TLS for ingress                                  | `true`            |
+| `ingress.enabled`                  | Enable ingress                                          | `true`            |
+| `ingress.hosts`                    | List of hosts in this ingress                           | empty             |
+| `ingress.class  `                  | Which ingressClassName to use                           | empty             |
+| `ingress.tls.enabled`              | Enable TLS for ingress                                  | `true`            |
+| `ingress.tls.secretName`           | Name of the secret storing the TLS certificate and key  | `jitsi-tls`       |
 | `jicofo.name`                      | Jicofo deployment name                                  | `jicofo`          |
 | `jicofo.image`                     | Jicofo docker image                                     | `jitsi/jicofo`    |
 | `jicofo.imagePullPolicy`           | Jicofo image pull policy                                | `Always`          |

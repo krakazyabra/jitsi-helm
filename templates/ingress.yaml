@@ -1,72 +1,42 @@
-{{ if $.Values.haproxy.ingressEnable -}}
-{{ if eq $.Values.haproxy.ingress.class "alb" -}}
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: ingress
-  namespace: {{ $.Values.namespace }}
-  annotations:
-    alb.ingress.kubernetes.io/group.name: {{ $.Values.haproxy.ingress.albGroup }}
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    {{ if $.Values.haproxy.ingress.tlsEnable }}
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-    {{ else }}
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    {{ end }}
-
-  labels:
-    scope: jitsi
-
-spec:
-  rules:
-  - host: {{ $.Values.haproxy.ingress.host }}
-    http:
-      paths:
-      {{ if $.Values.haproxy.ingress.tlsEnable -}}
-      - path: /*
-        backend:
-          serviceName: ssl-redirect
-          servicePort: use-annotation
-      {{ end -}}
-      - path: /*
-        backend:
-          serviceName: haproxy
-          servicePort: 8080
-{{ else -}}
+{{ if .Values.ingress.enabled -}}
+{{ $hosts := (gt (len $.Values.ingress.hosts) 0) | ternary ($.Values.ingress.hosts) (list ($.Values.PUBLIC_URL | default "" | replace "https://" "")) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    {{- if $.Values.haproxy.certmanager.issuer }}
-    cert-manager.io/cluster-issuer: {{ $.Values.haproxy.certmanager.issuer }}
+    {{- if $.Values.ingress.tls.certManagerClusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ $.Values.ingress.tls.certManagerClusterIssuer }}
     {{- end }}
-    kubernetes.io/ingress.class: {{ $.Values.haproxy.ingress.class }}
+    {{- if $.Values.ingress.annotations }}
+    {{- $.Values.ingress.annotations | toYaml | nindent 4 }}
+    {{- end }}
   name: ingress
   namespace: {{ $.Values.namespace }}
-
   labels:
     scope: jitsi
-
 spec:
+  {{ if $.Values.ingress.class -}}
+  ingressClassName: {{ $.Values.ingress.class }}
+  {{ end -}}
   rules:
-  - host: {{ $.Values.haproxy.ingress.host }}
+  {{ range $hosts -}}
+  - host: {{ . | quote }}
     http:
       paths:
       - backend:
           service:
             name: haproxy
             port:
-              number: 8080
+              name: http
         path: /
         pathType: Prefix
-  {{ if $.Values.haproxy.ingress.tlsEnable -}}
+  {{ end -}}
+  {{ if $.Values.ingress.tls.enabled -}}
   tls:
   - hosts:
-    - {{ $.Values.haproxy.ingress.host }}
-    secretName: jitsi-tls
+    {{ range $hosts -}}
+    - {{ . | quote }}
+    {{ end -}}
+    secretName: {{ $.Values.ingress.tls.secretName | quote }}
   {{ end -}}
-{{ end -}}
 {{ end -}}

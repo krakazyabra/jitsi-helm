@@ -1,7 +1,7 @@
 apiVersion: v1
 data:
   JVB_STUN_SERVERS: {{ $.Values.JVB_STUN_SERVERS }}
-  PUBLIC_URL: {{ if $.Values.PUBLIC_URL }}{{ $.Values.PUBLIC_URL }}{{ else }}{{ if $.Values.haproxy.ingress.tlsEnable }}{{ print "https://" $.Values.haproxy.ingress.host }}{{ else }}{{ print "http://" $.Values.haproxy.ingress.host }}{{ end }}{{ end }}
+  PUBLIC_URL: {{ ((gt (len $.Values.ingress.hosts) 0) | ternary (print "https://" ($.Values.ingress.hosts | first)) $.Values.PUBLIC_URL) | required "One of PUBLIC_URL or ingress.hosts must be provided" }}
   TZ: {{ $.Values.TZ }}
 kind: ConfigMap
 metadata:
