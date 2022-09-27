@@ -8,18 +8,20 @@ global:
 shardCount: 1
 namespace: jitsi
 
+ingress:
+  enabled: true
+  hosts: []
+  # class:
+  tls:
+    enabled: true
+    secretName: jitsi-tls
+    # certManagerClusterIssuer
+  annotations: {}
+  extraPaths: []
+
 haproxy:
   name: haproxy
   image: haproxy:2.4
-  ingressEnable: true
-  ingress:
-    # can be alb
-    class: haproxy
-    host: jitsi.example.org
-    tlsEnable: true
-    # albGroup: global
-  certmanager:
-    issuer: letsencrypt-prod
   extraPodSpec: {}
 jicofo:
   name: jicofo
