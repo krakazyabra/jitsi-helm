@@ -65,6 +65,7 @@ The following table lists the configurable parameters of the Jitsi Meet chart an
 | `ingress.class  `                  | Which ingressClassName to use                           | empty             |
 | `ingress.tls.enabled`              | Enable TLS for ingress                                  | `true`            |
 | `ingress.tls.secretName`           | Name of the secret storing the TLS certificate and key  | `jitsi-tls`       |
+| `ingress.extraPaths    `           | Extra paths to add to the ingress                       | `[]`              |
 | `jicofo.name`                      | Jicofo deployment name                                  | `jicofo`          |
 | `jicofo.image`                     | Jicofo docker image                                     | `jitsi/jicofo`    |
 | `jicofo.imagePullPolicy`           | Jicofo image pull policy                                | `Always`          |

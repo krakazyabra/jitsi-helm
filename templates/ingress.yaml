@@ -23,6 +23,19 @@ spec:
   - host: {{ . | quote }}
     http:
       paths:
+      {{ range $.Values.ingress.extraPaths -}}
+      - backend:
+          service:
+            name: {{ .serviceName | required "serviceName is required for every ingress.extraPaths" | quote }}
+            port:
+            {{- if .portName }}
+              name: {{ .portName | quote -}}
+            {{- else }}
+              number: {{ .portNumber | required "Either portName or portNumber is required for every ingress.extraPaths" -}}
+            {{ end }}
+        path: {{ .path | required "path is required for every ingress.extraPaths" | quote }}
+        pathType: {{ .pathType | default "Prefix" | quote }}
+      {{ end -}}
       - backend:
           service:
             name: haproxy

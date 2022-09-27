@@ -17,6 +17,7 @@ ingress:
     secretName: jitsi-tls
     # certManagerClusterIssuer
   annotations: {}
+  extraPaths: []
 
 haproxy:
   name: haproxy
