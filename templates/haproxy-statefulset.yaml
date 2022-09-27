@@ -1,3 +1,4 @@
+{{ if (gt ($.Values.shardCount | int) 1) -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -73,3 +74,4 @@ spec:
             path: haproxy.cfg
           name: haproxy-config
         name: haproxy-config
+{{ end -}}

@@ -1,3 +1,4 @@
+{{ if (gt ($.Values.shardCount | int) 1) -}}
 apiVersion: v1
 data:
   haproxy.cfg: |
@@ -6,3 +7,4 @@ kind: ConfigMap
 metadata:
   name: haproxy-config
   namespace: {{ $.Values.namespace }}
+{{ end -}}

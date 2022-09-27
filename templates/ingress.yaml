@@ -38,7 +38,7 @@ spec:
       {{ end -}}
       - backend:
           service:
-            name: haproxy
+            name: {{ if (gt ($.Values.shardCount | int) 1) }}haproxy{{ else }}shard-0-{{ $.Values.web.name }}{{ end }}
             port:
               name: http
         path: /
