@@ -95,6 +95,9 @@ web:
   extraPodSpec: {}
   extraVolumes: []
   extraVolumeMounts: []
+sysctl-jvb:
+  image: alpine:3.15
+  imagePullPolicy: Always
 
 createSecret: true
 JICOFO_AUTH_PASSWORD: ""

@@ -30,7 +30,8 @@ spec:
       hostNetwork: yes
       containers:
       - name: sysctl-jvb
-        image: alpine
+        image: {{ $.Values.sysctl-jvb.image | default "alpine" }}
+        imagePullPolicy: {{ $.Values.sysctl-jvb.imagePullPolicy | default "alpine" }}
         securityContext:
           privileged: true
         command:
